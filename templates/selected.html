@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Berita Terpilih</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+  <nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">⬅️ Kembali ke Beranda</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Cari dalam berita terpilih...">
+          <button class="btn btn-outline-secondary">Filter</button>
+          <button class="btn btn-primary">Cari</button>
+        </div>
+      </div>
+      <div class="col-md-6 text-end">
+        <select class="form-select d-inline-block w-auto me-2" id="paperSize">
+          <option value="A4">Kertas A4</option>
+          <option value="F4">Kertas F4</option>
+        </select>
+        <button class="btn btn-success" onclick="generateSummary()">🚀 Generate Ringkasan</button>
+      </div>
+    </div>
+
+    <div class="row" id="selectedContainer">
+    </div>
+
+    <div class="card mt-4 d-none" id="summaryCard">
+      <div class="card-header bg-primary text-white">Hasil Ringkasan LLM</div>
+      <div class="card-body" id="summaryResult"></div>
+    </div>
+  </div>
+
+  <script>
+    const selectedNews = JSON.parse(localStorage.getItem('selectedNews')) || [];
+    const container = document.getElementById('selectedContainer');
+
+    selectedNews.forEach(news => {
+      // Card Horizontal
+      const card = `
+        <div class="col-12 mb-3">
+            <div class="card flex-row align-items-center p-2">
+                <img src="${news.image}" class="rounded" style="width: 120px; height: 80px; object-fit: cover;">
+                <div class="ms-3">
+                    <h6 class="mb-1">${news.title}</h6>
+                    <span class="badge bg-info text-dark">${news.category}</span>
+                    <small class="text-muted ms-2">${news.date}</small>
+                </div>
+                <button class="btn btn-danger btn-sm ms-auto" onclick="removeNews('${news.id}')">Hapus</button>
+            </div>
+        </div>`;
+      container.innerHTML += card;
+    });
+
+    function removeNews(id) {
+      // Implementasi logika hapus array dan re-render
+      let filtered = selectedNews.filter(n => n.id !== id);
+      localStorage.setItem('selectedNews', JSON.stringify(filtered));
+      location.reload();
+    }
+
+    function generateSummary() {
+      const provider = localStorage.getItem('llmProvider');
+      const apiKey = localStorage.getItem('llmApiKey');
+
+      if (!apiKey) return alert("API Key belum disetting di halaman utama!");
+
+      document.getElementById('summaryResult').innerHTML = "<em>Sedang memproses ringkasan dengan LLM...</em>";
+      document.getElementById('summaryCard').classList.remove('d-none');
+
+      fetch('/api/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: provider,
+          api_key: apiKey,
+          news_items: selectedNews,
+          paper_size: document.getElementById('paperSize').value
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            document.getElementById('summaryResult').innerHTML = `<p style="white-space: pre-wrap;">${data.summary}</p>`;
+          } else {
+            alert("Error: " + data.error);
+          }
+        });
+    }
+  </script>
+</body>
+
+</html>
