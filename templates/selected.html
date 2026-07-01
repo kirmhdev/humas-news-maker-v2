@@ -83,6 +83,7 @@
 
       .card-horizontal {
         display: flex;
+        justify-content: space-between;
         background-color: white;
         border-radius: 10px;
         overflow: hidden;
@@ -176,8 +177,79 @@
         box-shadow: 0 2px 5px rgba(46, 204, 113, 0.3);
       }
 
+      .left-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .right-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-right: 15px;
+      }
+
+      .edit-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+      }
+
       .btn-generate:hover {
         background-color: #27ae60;
+      }
+
+      .popover-form {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .save-btn {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .cancel-btn {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      [popover] {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 75%;
+        height: auto;
+        background-color: white;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Membuat latar belakang di luar popover menjadi agak gelap */
+      [popover]::backdrop {
+        background: rgba(0, 0, 0, 0.4);
       }
 
       /* Responsif untuk layar kecil */
@@ -245,11 +317,57 @@
 
           data.forEach((news, id) => {
             const card = `
+            <div id="formPopover-${id}" popover>
+              <h3 style="margin-top: 0">Data Gambar</h3>
+
+              <form class="popover-form" action="/api/save-image-data" method="POST">
+                <div>
+                  <label for="judul-${id}">Judul Gambar:</label><br />
+                  <input
+                    type="text"
+                    id="judul-${id}"
+                    name="judul"
+                    class="form-control"
+                    placeholder="Masukkan judul..."
+                    value="${news.title}"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="url-${id}">URL Gambar:</label><br />
+                  <input
+                    type="url"
+                    id="url-${id}"
+                    name="url"
+                    class="form-control"
+                    placeholder="https://..."
+                    value="${news.image}"
+                    required
+                  />
+                </div>
+
+                <button type="submit" class="save-btn">Simpan</button>
+                <button
+                  type="button"
+                  popovertarget="formPopover-${id}"
+                  popovertargetaction="hide"
+                  class="cancel-btn"
+                >
+                  Batal
+                </button>
+              </form>
+            </div>
             <div class="card-horizontal" onclick="cardClickHandler('${id}')">
-              <img src="${news.image}" alt="Gambar Berita" class="card-image">
-              <div class="card-body">
-                <span class="card-category">${news.category}</span>
-                <h3 class="card-title">${news.title}</h3>
+              <div class="left-section">
+                <img src="${news.image}" alt="Gambar Berita" class="card-image">
+                <div class="card-body">
+                  <span class="card-category">${news.category}</span>
+                  <h3 class="card-title">${news.title}</h3>
+                </div>
+              </div>
+              <div class="right-section">
+                <button popovertarget="formPopover-${id}" class="edit-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#3498db"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Z"/></svg></button>
               </div>
             </div>
           `
@@ -268,6 +386,13 @@
       function cardClickHandler(newsId) {
         console.log("Berita yang diklik:", newsId)
         console.log("Data berita:", news[newsId])
+      }
+
+      function cancelEdit(newsId) {
+        const popover = document.getElementById(`formPopover-${newsId}`)
+        if (popover) {
+          popover.style.display = "none"
+        }
       }
     </script>
   </body>
