@@ -1,0 +1,38 @@
+.news-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.source-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.selected-btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 1000;
+  background-color: rgb(21, 46, 235);
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+}
+
+.selected-btn-container:hover {
+  background-color: rgb(21, 46, 235);
+}
+
+.selected-news-counter {
+  font-size: 14px;
+  font-weight: bold;
+  margin: auto 0;
+}
