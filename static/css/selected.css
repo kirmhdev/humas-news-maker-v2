@@ -1,3 +1,7 @@
+:root {
+  --btn-disabled-color: rgb(116, 116, 116);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -228,7 +232,7 @@ h1 {
 }
 
 .save-btn:disabled {
-  background-color: rgb(116, 116, 116);
+  background-color: var(--btn-disabled-color);
   cursor: not-allowed;
 }
 
@@ -296,6 +300,11 @@ h1 {
   cursor: pointer;
   background-color: rgb(37, 59, 253);
   border-radius: 0 4px 4px 0;
+}
+
+#url-input-submit:disabled {
+  background-color: var(--btn-disabled-color);
+  cursor: not-allowed;
 }
 
 /* Responsif untuk layar kecil */

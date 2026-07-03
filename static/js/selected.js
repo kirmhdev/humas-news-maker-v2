@@ -1,5 +1,6 @@
 const urlInputForm = document.querySelector("#url-input-form")
 const urlInput = document.querySelector("#url-input")
+const urlInputSubmit = document.querySelector("#url-input-submit")
 
 const Card = (news, id) => {
   return `
@@ -147,6 +148,8 @@ const updateData = () => {
 urlInputForm.addEventListener("submit", (e) => {
   e.preventDefault()
 
+  urlInputSubmit.disabled = true
+
   const formData = new FormData(urlInputForm)
 
   let object = {}
@@ -159,10 +162,17 @@ urlInputForm.addEventListener("submit", (e) => {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then(() => {
-    updateData()
-    urlInput.value = ""
   })
+    .then((res) => res.json())
+    .then((res) => {
+      urlInput.value = ""
+      urlInputSubmit.disabled = false
+      if (res.msg.startsWith("No scraping rules"))
+        return alert("Sumber ini tidak terdaftar")
+      if (res.msg == "News already exist")
+        return alert("Berita sudah ditambahkan")
+      updateData()
+    })
 })
 
 updateData() // Memanggil fungsi untuk memuat berita yang dipilih saat halaman dimuat

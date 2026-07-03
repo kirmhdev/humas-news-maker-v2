@@ -3,6 +3,15 @@
   object-fit: cover;
 }
 
+.card-image {
+  cursor: pointer;
+}
+
+.card-image-selected {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 .source-badge {
   position: absolute;
   top: 10px;

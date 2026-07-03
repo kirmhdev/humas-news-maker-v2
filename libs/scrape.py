@@ -56,8 +56,7 @@ def scrape_news_from_source(id, url, headers, sources):
     prefix = tldextract.extract(url).domain + "." + tldextract.extract(url).suffix
     source = next((s for s in sources if s.prefix == prefix), None)
     if not source:
-        print(f"No scraping rules defined for {prefix}")
-        return None
+        return f"No scraping rules defined for {prefix}"
 
     news = {}
     try:

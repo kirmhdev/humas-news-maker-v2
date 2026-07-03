@@ -65,11 +65,6 @@ def index():
     return render_template("index.html", request=request)
 
 
-@app.route("/get-selected-news-count")
-def get_selected_news_count():
-    return json.dumps({"count": len(selected_news)})
-
-
 @app.route("/get-suggested-news")
 def api_news():
     news = scrape_suggested_news(suggested_news_sources, HEADERS)
@@ -79,14 +74,19 @@ def api_news():
 
 @app.route("/add-news", methods=["POST"])
 def add_news():
-    print(request)
     req = request.json
+    news_url = req.get("url")
+
+    for news in selected_news:
+        if news.url == news_url:
+            return {"msg": "News already exist"}
 
     global news_id_counter
 
-    data = scrape_news_from_source(
-        news_id_counter, req.get("url"), HEADERS, news_sources
-    )
+    data = scrape_news_from_source(news_id_counter, news_url, HEADERS, news_sources)
+
+    if str(data).startswith("No scraping rules"):
+        return {"msg": data}
 
     news_id_counter += 1
     selected_news.append(data)  # Select news from the first source
@@ -95,7 +95,7 @@ def add_news():
         target=generate_news_thread, args=(data,)
     ).start()  # Generate news in a separate thread
 
-    return "News added successfully"
+    return {"msg": "News has been added"}
 
 
 @app.route("/get-selected-news")
@@ -137,7 +137,7 @@ def save_news_data():
             n["image"] = news["image"]
             n["paragraphs"] = news["body"].split("\n\n")
 
-    return "News data saved"
+    return "News data saved successfuly"
 
 
 if __name__ == "__main__":
