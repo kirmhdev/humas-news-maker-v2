@@ -26,6 +26,16 @@ body {
   left: 10px;
 }
 
+.settings-btn {
+  position: absolute;
+  color: rgb(138, 145, 153);
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  top: 10px;
+  right: 10px;
+}
+
 .container {
   margin: 0 auto;
   padding: 20px;

@@ -27,6 +27,16 @@ body {
   justify-content: center;
 }
 
+.back-btn {
+  position: absolute;
+  color: #8a9199;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  top: 10px;
+  left: 10px;
+}
+
 .container {
   width: 100%;
   max-width: 900px;
