@@ -59,44 +59,46 @@ def scrape_news_from_source(id, url, headers, sources):
         return f"No scraping rules defined for {prefix}"
 
     news = {}
-    # try:
-    response = requests.get(url, headers=headers, timeout=5)
-    soup = BeautifulSoup(response.text, "html.parser")
+    try:
+        response = requests.get(url, headers=headers, timeout=5)
+        soup = BeautifulSoup(response.text, "html.parser")
 
-    title_tag = soup.select_one(source["title_query"])
-    category_tag = soup.select_one(source["category_query"])
-    date_tag = soup.select_one(source["date_query"])
-    img_tag = soup.select_one(source["image_query"])
-    paragraph_tag = soup.select(source["paragraph_query"])
-    body = ""
+        title_tag = soup.select_one(source["title_query"])
+        category_tag = soup.select_one(source["category_query"])
+        date_tag = soup.select_one(source["date_query"])
+        img_tag = soup.select_one(source["image_query"])
+        paragraph_tag = soup.select(source["paragraph_query"])
+        body = ""
 
-    for p in paragraph_tag:
-        if p.name == "p":
-            p_text = p.get_text(strip=True)
-            if p_text and not p_text.lower().startswith("baca juga:"):
-                body += p_text + " "
+        for p in paragraph_tag:
+            if p.name == "p":
+                p_text = p.get_text(strip=True)
+                if p_text and not p_text.lower().startswith("baca juga:"):
+                    body += p_text + " "
 
-    news = {
-        "id": id,
-        "url": url,
-        "title": (
-            title_tag.text.replace("\n", " ").strip() if title_tag is not None else ""
-        ),
-        "prefix": source["prefix"],
-        "category": (
-            category_tag.text.replace("\n", " ").strip()
-            if category_tag is not None
-            else ""
-        ),
-        "date": (
-            date_tag.text.replace("\n", " ").strip() if date_tag is not None else ""
-        ),
-        "image": img_tag.get("src") or img_tag.get("data-src"),
-        "body": body.strip(),
-    }
+        news = {
+            "id": id,
+            "url": url,
+            "title": (
+                title_tag.text.replace("\n", " ").strip()
+                if title_tag is not None
+                else ""
+            ),
+            "prefix": source["prefix"],
+            "category": (
+                category_tag.text.replace("\n", " ").strip()
+                if category_tag is not None
+                else ""
+            ),
+            "date": (
+                date_tag.text.replace("\n", " ").strip() if date_tag is not None else ""
+            ),
+            "image": img_tag.get("src") or img_tag.get("data-src"),
+            "body": body.strip(),
+        }
 
-    # except Exception as e:
-    #     print(f"Error scraping {source["prefix"]}: {e}")
+    except Exception as e:
+        print(f"Error scraping {source["prefix"]}: {e}")
 
     return news
 

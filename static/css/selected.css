@@ -317,6 +317,22 @@ h1 {
   cursor: not-allowed;
 }
 
+.action-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-clear {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 /* Responsif untuk layar kecil */
 @media (max-width: 480px) {
   .btn-generate {

@@ -2,6 +2,7 @@ const urlInputForm = document.querySelector("#url-input-form")
 const urlInput = document.querySelector("#url-input")
 const urlInputSubmit = document.querySelector("#url-input-submit")
 const btnGenerate = document.querySelector("#btn-generate")
+const btnClear = document.querySelector("#btn-clear")
 
 const Card = (news, id) => {
   return `
@@ -205,6 +206,19 @@ btnGenerate.addEventListener("click", (e) => {
     .catch((e) => {
       alert("Generate document return error")
     })
+})
+
+btnClear.addEventListener("click", (e) => {
+  e.preventDefault()
+
+  if (confirm("Hapus semua berita?"))
+    fetch("/clear-news", {
+      method: "DELETE",
+    })
+      .then((res) => {
+        updateData()
+      })
+      .catch((e) => console.log(`Menghapus berita gagal: ${e}`))
 })
 
 updateData() // Memanggil fungsi untuk memuat berita yang dipilih saat halaman dimuat

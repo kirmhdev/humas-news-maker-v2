@@ -152,6 +152,17 @@ def delete_news():
     return "News deleted"
 
 
+@app.route("/clear-news", methods=["DELETE"])
+def clear_news():
+    global selected_news
+    global generated_news
+
+    selected_news = []
+    generated_news = []
+
+    return "All news cleared"
+
+
 @app.route("/generate-document", methods=["POST"])
 def generate_document():
     document_format = settings["documentFormat"]
