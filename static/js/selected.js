@@ -52,7 +52,8 @@ const Card = (news, id) => {
                 </div>
               </div>
               <div class="right-section">
-                <button popovertarget="popover-${id}" class="edit-btn" id="edit-btn-${id}" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#3498db"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Z"/></svg></button>
+                <button popovertarget="popover-${id}" class="action-btn" id="edit-btn-${id}" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#3498db"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Z"/></svg></button>
+                <button class="action-btn" id="delete-btn-${id}" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e74c3c"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
               </div>
             </div>
           `
@@ -72,6 +73,7 @@ const getGeneratedNews = (id) => {
       const card = document.querySelector(`#card-${id}`)
       const titleElement = document.querySelector(`#card-title-${id}`)
       const editBtn = document.querySelector(`#edit-btn-${id}`)
+      const deleteBtn = document.querySelector(`#delete-btn-${id}`)
 
       const popover = document.querySelector(`#popover-${id}`)
       const form = document.querySelector(`#form-${id}`)
@@ -84,12 +86,27 @@ const getGeneratedNews = (id) => {
       card.className = "card-horizontal" // Mengubah kelas menjadi card-horizontal
       titleElement.textContent = data.title // Mengubah judul berita
       editBtn.disabled = false // Mengaktifkan tombol edit
-      editBtn.className = "edit-btn" // Mengubah kelas tombol edit menjadi aktif
+      deleteBtn.disabled = false
 
       idInput.value = id
       titleInput.value = data.title
       imageInput.value = data.image
       bodyInput.innerHTML = data.paragraphs.join("\n\n")
+
+      deleteBtn.addEventListener("click", (e) => {
+        e.preventDefault()
+
+        if (confirm(`Hapus ${data.title}?`))
+          fetch(`/delete-news`, {
+            method: "DELETE",
+            body: JSON.stringify({ id }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then(() => console.log(`Berita ${data.title} telah dihapus`))
+            .catch(() => alert("Hapus berita gagal"))
+      })
 
       popover.addEventListener("toggle", (e) => {
         if (e.newState == "closed") getGeneratedNews(id)

@@ -55,9 +55,7 @@ def generate_news_thread(data):
         prefix=data.prefix,
     )
 
-    generated_news.append(
-        news.__dict__()
-    )  # Simpan berita yang dihasilkan ke dalam list
+    generated_news.append(news)  # Simpan berita yang dihasilkan ke dalam list
 
 
 @app.route("/")
@@ -114,19 +112,15 @@ def selected():
 def get_generated_news():
     requested_id = request.args.get("id")
 
-    print(f"Requested ID: {requested_id}")  # Debugging line
-
     if requested_id is not None:
         news = None
 
         while (
             news is None
         ):  # Loop until the generated news with the requested ID is found
-            news = next(
-                (n for n in generated_news if n["id"] == int(requested_id)), None
-            )
+            news = next((n for n in generated_news if n.id == int(requested_id)), None)
 
-        return json.dumps(news or {})
+        return json.dumps(news.__dict__())
 
 
 @app.route("/save-news-data", methods=["POST"])
@@ -140,6 +134,20 @@ def save_news_data():
             n["paragraphs"] = news["body"].split("\n\n")
 
     return "News data saved successfuly"
+
+
+@app.route("/delete-news", methods=["DELETE"])
+def delete_news():
+    req = request.json
+    news_id = int(req.get("id"))
+
+    global selected_news
+    global generated_news
+
+    selected_news = list(filter(lambda item: item.id != news_id, selected_news))
+    generated_news = list(filter(lambda item: item.id != news_id, generated_news))
+
+    return "News deleted"
 
 
 @app.route("/generate-document", methods=["POST"])

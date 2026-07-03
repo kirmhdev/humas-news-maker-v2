@@ -180,14 +180,14 @@ h1 {
   padding-right: 15px;
 }
 
-.edit-btn {
+.action-btn {
   background: none;
   border: none;
   cursor: pointer;
   padding: 5px;
 }
 
-.edit-btn:disabled {
+.action-btn:disabled {
   background: none;
   border: none;
   cursor: not-allowed;
