@@ -1,3 +1,9 @@
+const params = new URLSearchParams(document.location.search)
+
+const selectedNewsCounter = document.querySelector(".selected-news-counter")
+const newsCategoryList = document.querySelector("#news-category-list")
+const suggestedNewsCategory = params.get("category") || "Nasional"
+
 let newsData = [] // Variable to store the fetched news data
 
 const Card = (news) => `
@@ -17,7 +23,6 @@ const Card = (news) => `
                 </div>
                 `
 
-const selectedNewsCounter = document.querySelector(".selected-news-counter")
 const getSelectedNews = () => {
   fetch("/get-selected-news")
     .then((response) => response.json())
@@ -61,8 +66,18 @@ function addNewsHandler(newsUrl) {
     })
 }
 
+fetch("/get-suggested-news-categories")
+  .then((res) => res.json())
+  .then((data) => {
+    data.forEach((d, i) => {
+      newsCategoryList.innerHTML += `
+        <li class="news-category ${d == suggestedNewsCategory ? "news-category-selected" : ""}"><a href="/?category=${d}">${d}</a></li>
+      `
+    })
+  })
+
 // Load news
-fetch("/get-suggested-news")
+fetch("/get-suggested-news?category=" + suggestedNewsCategory)
   .then((response) => response.json())
   .then((data) => {
     if (!data || data.length === 0) {

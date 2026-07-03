@@ -9,14 +9,58 @@
   "suggestedNewsSources": [
     {
       "prefix": "kompas.com",
-      "url": "https://kompas.com/",
+      "url": "https://indeks.kompas.com/?site=nasional",
       "category": "Nasional",
-      "article_query": "div.wSpec-item",
-      "title_query": "h4.wSpec-title",
-      "category_query": "p.wSpec-subtitle",
+      "article_query": "div.articleItem",
+      "title_query": "h2.articleTitle",
+      "category_query": "div.articlePost-subtitle",
       "link_query": "a",
-      "date_query": "p.wSpec-subtitle > span",
-      "image_query": "img"
+      "date_query": "div.articlePost-date",
+      "image_query": "div.articleItem-img > img"
+    },
+    {
+      "prefix": "kompas.com",
+      "url": "https://indeks.kompas.com/?site=global",
+      "category": "Internasional",
+      "article_query": "div.articleItem",
+      "title_query": "h2.articleTitle",
+      "category_query": "div.articlePost-subtitle",
+      "link_query": "a",
+      "date_query": "div.articlePost-date",
+      "image_query": "div.articleItem-img > img"
+    },
+    {
+      "prefix": "kompas.com",
+      "url": "https://indeks.kompas.com/?site=tekno",
+      "category": "Tech",
+      "article_query": "div.articleItem",
+      "title_query": "h2.articleTitle",
+      "category_query": "div.articlePost-subtitle",
+      "link_query": "a",
+      "date_query": "div.articlePost-date",
+      "image_query": "div.articleItem-img > img"
+    },
+    {
+      "prefix": "kompas.com",
+      "url": "https://indeks.kompas.com/?site=bola",
+      "category": "Sport",
+      "article_query": "div.articleItem",
+      "title_query": "h2.articleTitle",
+      "category_query": "div.articlePost-subtitle",
+      "link_query": "a",
+      "date_query": "div.articlePost-date",
+      "image_query": "div.articleItem-img > img"
+    },
+    {
+      "prefix": "kompas.com",
+      "url": "https://indeks.kompas.com/?site=hype",
+      "category": "Entertainment",
+      "article_query": "div.articleItem",
+      "title_query": "h2.articleTitle",
+      "category_query": "div.articlePost-subtitle",
+      "link_query": "a",
+      "date_query": "div.articlePost-date",
+      "image_query": "div.articleItem-img > img"
     }
   ],
   "newsSources": [

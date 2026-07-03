@@ -5,46 +5,47 @@ import requests
 import tldextract
 
 
-def scrape_suggested_news(sources, headers):
+def scrape_suggested_news(sources, headers, category):
     news_list = []
     try:
         for source in sources:
-            url = source["url"]
-            response = requests.get(url, headers=headers, timeout=5)
-            soup = BeautifulSoup(response.text, "html.parser")
+            if source["category"] == category:
+                url = source["url"]
+                response = requests.get(url, headers=headers, timeout=5)
+                soup = BeautifulSoup(response.text, "html.parser")
 
-        # Mencari elemen artikel (Struktur HTML Kompas bisa berubah sewaktu-waktu)
-        article_list = soup.select(source["article_query"])
+                # Mencari elemen artikel (Struktur HTML Kompas bisa berubah sewaktu-waktu)
+                article_list = soup.select(source["article_query"])
 
-        for article in article_list:
-            title_tag = article.select_one(source["title_query"])
-            category_tag = article.select_one(source["category_query"])
-            link_tag = article.select_one(source["link_query"])
-            date_tag = article.select_one(source["date_query"])
-            img_tag = article.select_one(source["image_query"])
+                for article in article_list:
+                    title_tag = article.select_one(source["title_query"])
+                    category_tag = article.select_one(source["category_query"])
+                    link_tag = article.select_one(source["link_query"])
+                    date_tag = article.select_one(source["date_query"])
+                    img_tag = article.select_one(source["image_query"])
 
-            news_list.append(
-                {
-                    "title": (
-                        title_tag.text.replace("\n", " ").strip()
-                        if title_tag is not None
-                        else ""
-                    ),
-                    "prefix": source["prefix"],
-                    "category": (
-                        category_tag.text.replace("\n", " ").strip()
-                        if category_tag is not None
-                        else ""
-                    ),  # Kategori default jika sulit di-scrape di halaman depan
-                    "date": (
-                        date_tag.text.replace("\n", " ").strip()
-                        if date_tag is not None
-                        else ""
-                    ),  # Menggunakan tanggal hari ini untuk simpelnya
-                    "image": img_tag.get("src") or img_tag.get("data-src"),
-                    "url": link_tag.get("href"),
-                }
-            )
+                    news_list.append(
+                        {
+                            "title": (
+                                title_tag.text.replace("\n", " ").strip()
+                                if title_tag is not None
+                                else ""
+                            ),
+                            "prefix": source["prefix"],
+                            "category": (
+                                category_tag.text.replace("\n", " ").strip()
+                                if category_tag is not None
+                                else ""
+                            ),  # Kategori default jika sulit di-scrape di halaman depan
+                            "date": (
+                                date_tag.text.replace("\n", " ").strip()
+                                if date_tag is not None
+                                else ""
+                            ),  # Menggunakan tanggal hari ini untuk simpelnya
+                            "image": img_tag.get("src") or img_tag.get("data-src"),
+                            "url": link_tag.get("href"),
+                        }
+                    )
     except Exception as e:
         print(f"Error scraping news: {e}")
 

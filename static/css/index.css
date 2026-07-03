@@ -1,3 +1,19 @@
+.news-category-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+}
+
+.news-category > a {
+  color: blue;
+  text-decoration: none;
+}
+
+.news-category-selected > a {
+  text-decoration: underline;
+}
+
 .news-card img {
   height: 200px;
   object-fit: cover;

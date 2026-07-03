@@ -30,7 +30,6 @@ def init_data():
 
 
 def generate_news_thread(data):
-    print(data)
     generated_news_data = generate_news(data["body"], settings["groqModel"])
 
     news = {
@@ -52,11 +51,17 @@ def index_page():
     return render_template("index.html", request=request)
 
 
+@app.route("/get-suggested-news-categories")
+def get_suggested_news_categories():
+    return settings["suggestedNewsCategory"]
+
+
 @app.route("/get-suggested-news")
 def get_suggested_news():
-    print(type(settings))
+    category = request.args.get("category")
+
     news = scrape_suggested_news(
-        sources=suggested_news_sources, headers=settings["headers"]
+        sources=suggested_news_sources, headers=settings["headers"], category=category
     )
 
     return json.dumps(news)
