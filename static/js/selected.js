@@ -1,6 +1,7 @@
 const urlInputForm = document.querySelector("#url-input-form")
 const urlInput = document.querySelector("#url-input")
 const urlInputSubmit = document.querySelector("#url-input-submit")
+const btnGenerate = document.querySelector("#btn-generate")
 
 const Card = (news, id) => {
   return `
@@ -172,6 +173,20 @@ urlInputForm.addEventListener("submit", (e) => {
       if (res.msg == "News already exist")
         return alert("Berita sudah ditambahkan")
       updateData()
+    })
+})
+
+btnGenerate.addEventListener("click", (e) => {
+  e.preventDefault()
+
+  fetch("/generate-document", {
+    method: "POST",
+  })
+    .then(() => {
+      alert("Document created")
+    })
+    .catch((e) => {
+      alert("Generate document return error")
     })
 })
 

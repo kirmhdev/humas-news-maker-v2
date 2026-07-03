@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from bs4 import BeautifulSoup
 import requests
 import tldextract
@@ -101,3 +103,9 @@ def scrape_news_from_source(id, url, headers, sources):
         print(f"Error scraping {source.prefix}: {e}")
 
     return news
+
+
+def scrape_image_to_bytes(url, headers):
+    res = requests.get(url=url, headers=headers)
+    img_stream = BytesIO(res.content)
+    return img_stream

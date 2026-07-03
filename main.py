@@ -1,16 +1,16 @@
-from flask import Flask, render_template, request
 import json
+import threading
+from time import sleep
+from flask import Flask, render_template, request
 from libs.scrape import scrape_news_from_source, scrape_suggested_news
 from libs.types import GeneratedNews, SuggestedNewsSource, NewsSource
-import threading
 from libs.generate import generate_news
+from libs.document import create_document
+
+with open("settings.json", mode="r") as file:
+    settings = json.load(file)
 
 app = Flask(__name__)
-
-# Headers agar request kita terlihat seperti browser asli, bukan bot
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-}
 
 suggested_news_sources = [
     SuggestedNewsSource(
@@ -67,7 +67,7 @@ def index():
 
 @app.route("/get-suggested-news")
 def api_news():
-    news = scrape_suggested_news(suggested_news_sources, HEADERS)
+    news = scrape_suggested_news(suggested_news_sources, settings["headers"])
 
     return json.dumps([news.__dict__() for news in news])
 
@@ -83,7 +83,9 @@ def add_news():
 
     global news_id_counter
 
-    data = scrape_news_from_source(news_id_counter, news_url, HEADERS, news_sources)
+    data = scrape_news_from_source(
+        news_id_counter, news_url, settings["headers"], news_sources
+    )
 
     if str(data).startswith("No scraping rules"):
         return {"msg": data}
@@ -138,6 +140,18 @@ def save_news_data():
             n["paragraphs"] = news["body"].split("\n\n")
 
     return "News data saved successfuly"
+
+
+@app.route("/generate-document", methods=["POST"])
+def generate_document():
+    document_format = settings["documentFormat"]
+
+    while len(generated_news) != len(selected_news):
+        sleep(0.1)
+
+    create_document(generated_news, document_format, settings["headers"])
+
+    return "Document created"
 
 
 if __name__ == "__main__":
