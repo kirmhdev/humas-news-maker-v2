@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pengaturan Aplikasi & Scraping</title>
+    <link
+      href="{{url_for('static', filename='css/settings.css')}}"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Control Panel Pengaturan</h1>
+        <p>
+          Kelola kategori berita, konfigurasi pencarian engine (scraping),
+          kredensial API, dan tata letak dokumen.
+        </p>
+      </header>
+
+      <form id="settingsForm">
+        <div class="section-card">
+          <div class="section-title">1. General Settings</div>
+          <div class="form-group">
+            <label>Suggested News Categories (Dinamis)</label>
+            <div class="tags-container" id="categoryTagsContainer"></div>
+            <div class="tag-input-group">
+              <input
+                type="text"
+                id="newCategoryInput"
+                placeholder="Tambah kategori baru... (Contoh: Ekonomi)"
+              />
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="addCategoryTag()"
+              >
+                Tambah
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">2. News Scraping Configuration</div>
+
+          <div class="form-group" style="margin-bottom: 30px">
+            <label style="font-weight: 600; font-size: 15px"
+              >Suggested News Sources</label
+            >
+            <div id="suggestedSourcesContainer"></div>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="addSuggestedSourceElement()"
+            >
+              + Tambah Sumber Rekomendasi
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 600; font-size: 15px"
+              >News Body/Article Sources</label
+            >
+            <div id="newsSourcesContainer"></div>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="addNewsSourceElement()"
+            >
+              + Tambah Sumber Detail Berita
+            </button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">3. API & Request Settings</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="groqModel">Groq Model LLM</label>
+              <input
+                type="text"
+                id="groqModel"
+                name="groqModel"
+                value="openai/gpt-oss-120b"
+              />
+            </div>
+            <div class="form-group">
+              <label for="groqAPIKey">Groq API Key</label>
+              <input
+                type="text"
+                id="groqAPIKey"
+                name="groqAPIKey"
+                placeholder="Masukkan API Key dari Groq..."
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="groqSystemPrompt">Groq System Prompt</label>
+            <textarea
+              id="groqSystemPrompt"
+              name="groqSystemPrompt"
+              rows="4"
+              placeholder="Masukkan system prompt untuk mengatur perilaku AI..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="userAgent">HTTP User-Agent</label>
+            <input type="text" id="userAgent" name="userAgent" />
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">4. Document Layout & Typography</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="titleFont">Font Judul</label>
+              <select id="titleFont">
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Georgia">Georgia</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="titleSize">Ukuran Font Judul (pt)</label>
+              <input type="number" id="titleSize" min="1" />
+            </div>
+            <div
+              class="form-group"
+              style="display: flex; align-items: flex-end; padding-bottom: 10px"
+            >
+              <label class="checkbox-container">
+                <input type="checkbox" id="titleBold" /> Judul Bold (Tebal)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="paragraphFont">Font Paragraf</label>
+              <select id="paragraphFont">
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Georgia">Georgia</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="paragraphSize">Ukuran Font Paragraf (pt)</label>
+              <input type="number" id="paragraphSize" min="1" />
+            </div>
+            <div class="form-group">
+              <label for="imageHeight">Tinggi Gambar Max (inch)</label>
+              <input type="number" id="imageHeight" step="0.01" min="0" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pageWidth">Lebar Halaman (inch)</label>
+              <input type="number" id="pageWidth" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="pageHeight">Tinggi Halaman (inch)</label>
+              <input type="number" id="pageHeight" step="0.01" min="0" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pageMtop">Margin Atas (inch)</label>
+              <input type="number" id="pageMtop" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="pageMbot">Margin Bawah (inch)</label>
+              <input type="number" id="pageMbot" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="pageMlef">Margin Kiri (inch)</label>
+              <input type="number" id="pageMlef" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="pageMrig">Margin Kanan (inch)</label>
+              <input type="number" id="pageMrig" step="0.01" min="0" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-container">
+              <input type="checkbox" id="useFooter" /> Tampilkan Footer Halaman
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-submit">
+          Save Settings
+        </button>
+      </form>
+    </div>
+
+    <script src="{{url_for('static', filename='js/settings.js')}}"></script>
+  </body>
+</html>

@@ -15,13 +15,13 @@ def create_pages(data, format, headers):
         title = document.add_paragraph()
         title_format = title.paragraph_format
         title_format.space_after = Pt(0)
-        title_font = title.add_run(d.title).font
+        title_font = title.add_run(d["title"]).font
         title_font.name = format["titleFont"]
         title_font.size = Pt(format["titleSize"])
         title_font.bold = format["titleBold"]
 
         try:
-            image = scrape_image_to_bytes(d.image, headers)
+            image = scrape_image_to_bytes(d["image"], headers)
             document.add_picture(image, height=Inches(format["imageHeight"]))
         except Exception as e:
             print(e)
@@ -29,7 +29,7 @@ def create_pages(data, format, headers):
         last_paragraph = document.paragraphs[-1]
         last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-        for p in d.paragraphs:
+        for p in d["paragraphs"]:
             paragraph = document.add_paragraph()
             paragraph_font = paragraph.add_run(p).font
             paragraph_font.name = format["paragraphFont"]

@@ -50,7 +50,6 @@ function addNewsHandler(newsUrl) {
   })
     .then((res) => {
       if (res.ok) {
-        alert("Berita berhasil ditambahkan.")
         getSelectedNews() // Update the selected news count after adding
       } else {
         alert("Gagal menambahkan berita.")

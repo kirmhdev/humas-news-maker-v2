@@ -1,7 +1,48 @@
 {
+  "suggestedNewsCategory": [
+    "Nasional",
+    "Internasional",
+    "Tech",
+    "Sport",
+    "Entertainment"
+  ],
+  "suggestedNewsSources": [
+    {
+      "prefix": "kompas.com",
+      "url": "https://kompas.com/",
+      "category": "Nasional",
+      "article_query": "div.wSpec-item",
+      "title_query": "h4.wSpec-title",
+      "category_query": "p.wSpec-subtitle",
+      "link_query": "a",
+      "date_query": "p.wSpec-subtitle > span",
+      "image_query": "img"
+    }
+  ],
+  "newsSources": [
+    {
+      "prefix": "kompas.com",
+      "title_query": "h1.read__title",
+      "paragraph_query": "div.clearfix > p",
+      "category_query": "ul.breadcrumb__wrap > li:nth-child(2) > a",
+      "date_query": "div.read__time",
+      "image_query": "div.photo__wrap > img"
+    },
+    {
+      "prefix": "detik.com",
+      "title_query": "h1.detail__title",
+      "paragraph_query": "div.detail__body-text > p",
+      "category_query": "span.detail__label",
+      "date_query": "div.detail__date",
+      "image_query": "img.img-zoomin"
+    }
+  ],
+  "groqModel": "openai/gpt-oss-120b",
+  "groqAPIKey": "",
+  "groqSystemPrompt": "Kamu adalah asisten AI yang ahli dalam membaca, menganalisis, dan membuat berita.\nTugasmu adalah membuat berita dari teks yang diberikan oleh pengguna ke dalam satu judul utama dan beberapa paragraf isi.\n\n**ATURAN MUTLAK:**\n1. Kamu WAJIB merespon HANYA menggunakan format JSON yang valid.\n2. DILARANG KERAS menambahkan teks pembuka, penutup, basa-basi, atau penjelasan apa pun di luar JSON.\n3. DILARANG menggunakan format markdown code block (seperti `json ... `). Langsung berikan JSON mentahnya saja.\n4. Gunakan struktur JSON berikut ini:\n\n{\n'title': 'Tulis judul berita yang menarik di sini',\n'paragraphs': [\n'Tulis paragraf berita pertama di sini...',\n'Tulis paragraf berita kedua di sini...',\n...\n]\n}",
   "headers": {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-},
+  },
   "documentFormat": {
     "titleFont": "Times New Roman",
     "titleSize": 22,

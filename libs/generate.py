@@ -1,4 +1,5 @@
 import re
+from time import sleep
 from groq import Groq
 from dotenv import load_dotenv
 import os
@@ -37,43 +38,53 @@ def clean_text(text):
     return text
 
 
-def generate_news(text):
+def generate_news(text, model):
     cleaned_text = clean_text(text)
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-        messages=[
-            {
-                "role": "system",
-                "content": system_prompt,
-            },
-            {
-                "role": "user",
-                "content": f"Ini adalah teks panjang yang ingin dibuat menjadi berita: {cleaned_text}",
-            },
-        ],
-        temperature=0.1,
-        response_format={
-            "type": "json_schema",
-            "json_schema": {
-                "name": "berita",
-                "schema": {
-                    "type": "object",
-                    "strict": True,
-                    "properties": {
-                        "title": {"type": "string", "description": "Judul berita"},
-                        "paragraphs": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "description": "Paragraf berita",
+    while True:
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": system_prompt,
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Ini adalah teks panjang yang ingin dibuat menjadi berita: {cleaned_text}",
+                    },
+                ],
+                temperature=0.1,
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "berita",
+                        "schema": {
+                            "type": "object",
+                            "strict": True,
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "Judul berita",
+                                },
+                                "paragraphs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "description": "Paragraf berita",
+                                    },
+                                },
                             },
+                            "required": ["title", "paragraphs"],
+                            "additionalProperties": False,
                         },
                     },
-                    "required": ["title", "paragraphs"],
-                    "additionalProperties": False,
                 },
-            },
-        },
-    )
+            )
+
+            break
+        except:
+            print("AI limit reached")
+            sleep(5)
 
     return json.loads(response.choices[0].message.content)

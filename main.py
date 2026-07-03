@@ -3,71 +3,63 @@ import threading
 from time import sleep
 from flask import Flask, render_template, request
 from libs.scrape import scrape_news_from_source, scrape_suggested_news
-from libs.types import GeneratedNews, SuggestedNewsSource, NewsSource
 from libs.generate import generate_news
 from libs.document import create_document
 
-with open("settings.json", mode="r") as file:
-    settings = json.load(file)
-
 app = Flask(__name__)
 
-suggested_news_sources = [
-    SuggestedNewsSource(
-        prefix="kompas.com",
-        url="https://kompas.com/",
-        article_query="div.wSpec-item",
-        title_query="h4.wSpec-title",
-        category_query="p.wSpec-subtitle",
-        link_query="a",
-        date_query="p.wSpec-subtitle > span",
-        image_query="img",
-    )
-]
-
-news_sources = [
-    NewsSource(
-        prefix="kompas.com",
-        title_query="h1.read__title",
-        paragraph_query="div.clearfix > p",
-        category_query="ul.breadcrumb__wrap > li:nth-child(2) > a",
-        date_query="div.read__time",
-        image_query="div.photo__wrap > img",
-    )
-]
+settings = {}
+suggested_news_sources = []
+news_sources = []
 
 selected_news = []  # List untuk menyimpan berita yang dipilih
 generated_news = []  # List untuk menyimpan berita yang dihasilkan
 news_id_counter = 0  # Counter untuk memberikan ID unik pada berita
 
 
-def generate_news_thread(data):
-    generated_news_data = generate_news(data.body)
+def init_data():
+    global settings
+    global suggested_news_sources
+    global news_sources
 
-    news = GeneratedNews(
-        id=data.id,
-        title=generated_news_data.get("title", ""),
-        category=data.category,
-        paragraphs=generated_news_data.get("paragraphs", []),
-        date=data.date,
-        image=data.image,
-        url=data.url,
-        prefix=data.prefix,
-    )
+    with open("settings.json", mode="r") as file:
+        settings = json.load(file)
+
+    suggested_news_sources = settings["suggestedNewsSources"]
+    news_sources = settings["newsSources"]
+
+
+def generate_news_thread(data):
+    print(data)
+    generated_news_data = generate_news(data["body"], settings["groqModel"])
+
+    news = {
+        "id": data["id"],
+        "title": generated_news_data.get("title", ""),
+        "category": data["category"],
+        "paragraphs": generated_news_data.get("paragraphs", []),
+        "date": data["date"],
+        "image": data["image"],
+        "url": data["url"],
+        "prefix": data["prefix"],
+    }
 
     generated_news.append(news)  # Simpan berita yang dihasilkan ke dalam list
 
 
 @app.route("/")
-def index():
+def index_page():
     return render_template("index.html", request=request)
 
 
 @app.route("/get-suggested-news")
-def api_news():
-    news = scrape_suggested_news(suggested_news_sources, settings["headers"])
+def get_suggested_news():
+    print(type(settings))
+    news = scrape_suggested_news(
+        sources=suggested_news_sources, headers=settings["headers"]
+    )
 
-    return json.dumps([news.__dict__() for news in news])
+    return json.dumps(news)
 
 
 @app.route("/add-news", methods=["POST"])
@@ -76,14 +68,17 @@ def add_news():
     news_url = req.get("url")
 
     for news in selected_news:
-        if news.url == news_url:
+        if news["url"] == news_url:
             return {"msg": "News already exist"}
 
     global news_id_counter
 
-    data = scrape_news_from_source(
-        news_id_counter, news_url, settings["headers"], news_sources
-    )
+    data = None
+
+    while data == None:
+        data = scrape_news_from_source(
+            news_id_counter, news_url, settings["headers"], news_sources
+        )
 
     if str(data).startswith("No scraping rules"):
         return {"msg": data}
@@ -100,11 +95,11 @@ def add_news():
 
 @app.route("/get-selected-news")
 def get_selected_news():
-    return json.dumps([news.__dict__() for news in selected_news])
+    return json.dumps(selected_news)
 
 
 @app.route("/selected")
-def selected():
+def selected_page():
     return render_template("selected.html", news=selected_news)
 
 
@@ -118,9 +113,11 @@ def get_generated_news():
         while (
             news is None
         ):  # Loop until the generated news with the requested ID is found
-            news = next((n for n in generated_news if n.id == int(requested_id)), None)
+            news = next(
+                (n for n in generated_news if n["id"] == int(requested_id)), None
+            )
 
-        return json.dumps(news.__dict__())
+        return json.dumps(news)
 
 
 @app.route("/save-news-data", methods=["POST"])
@@ -161,6 +158,34 @@ def generate_document():
 
     return "Document created"
 
+
+@app.route("/settings")
+def settings_page():
+    return render_template("settings.html")
+
+
+@app.route("/get-settings")
+def get_settings():
+    return json.dumps(settings)
+
+
+@app.route("/set-settings", methods=["POST"])
+def set_settings():
+    req = request.json
+    data = json.dumps(req, indent=2)
+
+    try:
+        with open("settings.json", "w") as file:
+            file.write(data)
+        print("Success")
+        init_data()
+        return "Set settings success"
+    except:
+        print("Failed")
+        return "Set settings failed"
+
+
+init_data()
 
 if __name__ == "__main__":
     app.run(debug=True)
