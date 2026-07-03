@@ -54,7 +54,7 @@ def generate_news(text, model):
                         "content": f"Ini adalah teks panjang yang ingin dibuat menjadi berita: {cleaned_text}",
                     },
                 ],
-                temperature=0.1,
+                temperature=0.5,
                 response_format={
                     "type": "json_schema",
                     "json_schema": {
