@@ -1,10 +1,9 @@
-import json
-import threading
+import json, threading
 from time import sleep
 from flask import Flask, render_template, request
 from libs.scrape import scrape_news_from_source, scrape_suggested_news
 from libs.generate import generate_news
-from libs.document import create_document
+from libs.document import create_document, save_news_to_json
 
 app = Flask(__name__)
 
@@ -138,6 +137,33 @@ def save_news_data():
     return "News data saved successfuly"
 
 
+@app.route("/save-news", methods=["POST"])
+def save_news():
+    data = {"selectedNews": selected_news, "generatedNews": generated_news}
+
+    save_news_to_json(data, "OUT")
+
+    return "News saved successfuly"
+
+
+@app.route("/load-news", methods=["POST"])
+def load_news():
+    data = request.json
+
+    print(data)
+
+    global selected_news
+    global generated_news
+
+    try:
+        selected_news = data["selectedNews"]
+        generated_news = data["generatedNews"]
+
+        return "News loaded successfuly"
+    except:
+        return "Error when loading news"
+
+
 @app.route("/delete-news", methods=["DELETE"])
 def delete_news():
     req = request.json
@@ -170,7 +196,9 @@ def generate_document():
     while len(generated_news) != len(selected_news):
         sleep(0.1)
 
-    create_document(generated_news, document_format, settings["headers"])
+    save_news()
+
+    create_document(generated_news, document_format, settings["headers"], "OUT")
 
     return "Document created"
 

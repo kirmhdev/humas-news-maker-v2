@@ -1,4 +1,4 @@
-import datetime, math, os
+import datetime, math, os, json
 
 # from libs import scrape
 from docx import Document
@@ -8,6 +8,36 @@ from libs.scrape import scrape_image_to_bytes
 
 # hti = Html2Image()
 document = Document()
+
+
+def get_out_filename(root_out_dir):
+    datetime_now = datetime.datetime.now()
+    first_weekday = datetime.datetime(
+        year=datetime_now.year, month=datetime_now.month, day=1
+    ).weekday()
+
+    offset_date = datetime_now.day + first_weekday - 1
+    week = math.floor(offset_date / 7)
+    month, year = datetime_now.month, datetime_now.year
+    if week == 0:
+        week = 4
+        month -= 1
+        if month == 0:
+            month = 12
+            year -= 1
+
+    formatted_date = datetime.datetime(month=month, year=year, day=1)
+
+    edition = f"{formatted_date.strftime("%B %Y")} ({str(week)})"
+
+    current_directory = os.getcwd()
+    out_dir = f"{root_out_dir}/{formatted_date.strftime("%Y/%B")}"
+    final_directory = os.path.join(current_directory, out_dir)
+    if not os.path.exists(final_directory):
+        os.makedirs(final_directory)
+
+    out_filename = os.path.join(final_directory, f"sans {edition}")
+    return out_filename
 
 
 def create_pages(data, format, headers):
@@ -44,7 +74,7 @@ def create_pages(data, format, headers):
 #         document.add_picture(".cache/screenshot.png", width=Inches(4.3))
 
 
-def create_document(data, format, headers):
+def create_document(data, format, headers, root_out_dir):
     create_pages(data, format, headers=headers)
 
     section = document.sections[0]
@@ -60,28 +90,16 @@ def create_document(data, format, headers):
     # if use_classements:
     #     create_classements(classement_list)
 
-    datetime_now = datetime.datetime.now()
-    first_weekday = datetime.datetime(
-        year=datetime_now.year, month=datetime_now.month, day=1
-    ).weekday()
+    out_filename = get_out_filename(root_out_dir)
 
-    offset_date = datetime_now.day + first_weekday - 1
-    week = math.floor(offset_date / 7)
-    month, year = datetime_now.month, datetime_now.year
-    if week == 0:
-        week = 4
-        month -= 1
-        if month == 0:
-            month = 12
-            year -= 1
+    document.save(f"{out_filename}.docx")
 
-    formatted_date = datetime.datetime(month=month, year=year, day=1)
 
-    edition = f"{formatted_date.strftime("%B %Y")} ({str(week)})"
-    if format["useFooter"]:
-        section.footer.add_paragraph(f"Santri Update {edition}")
+def save_news_to_json(data, root_out_dir):
+    out_filename = get_out_filename(root_out_dir)
 
-    out_dir = f"OUT/{formatted_date.strftime("%Y/%B")}"
-    os.makedirs(out_dir, exist_ok=True)
-
-    document.save(f"{out_dir}/sans {edition}.docx")
+    try:
+        with open(f"{out_filename}.json", "w") as file:
+            json.dump(data, file)
+    except:
+        print("Error when saving news")

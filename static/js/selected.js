@@ -1,8 +1,10 @@
 const urlInputForm = document.querySelector("#url-input-form")
 const urlInput = document.querySelector("#url-input")
 const urlInputSubmit = document.querySelector("#url-input-submit")
-const btnGenerate = document.querySelector("#btn-generate")
 const btnClear = document.querySelector("#btn-clear")
+const btnSave = document.querySelector("#btn-save")
+const btnGenerate = document.querySelector("#btn-generate")
+const jsonInput = document.querySelector("#json-input")
 
 const Card = (news, id) => {
   return `
@@ -194,20 +196,6 @@ urlInputForm.addEventListener("submit", (e) => {
     })
 })
 
-btnGenerate.addEventListener("click", (e) => {
-  e.preventDefault()
-
-  fetch("/generate-document", {
-    method: "POST",
-  })
-    .then(() => {
-      alert("Document created")
-    })
-    .catch((e) => {
-      alert("Generate document return error")
-    })
-})
-
 btnClear.addEventListener("click", (e) => {
   e.preventDefault()
 
@@ -218,7 +206,61 @@ btnClear.addEventListener("click", (e) => {
       .then((res) => {
         updateData()
       })
-      .catch((e) => console.log(`Menghapus berita gagal: ${e}`))
+      .catch((e) => {
+        console.log(e)
+        alert(`Menghapus berita gagal`)
+      })
+})
+
+btnSave.addEventListener("click", (e) => {
+  e.preventDefault()
+
+  if (confirm("Simpan berita?"))
+    fetch("/save-news", {
+      method: "POST",
+    })
+      .then((res) => {
+        alert("Menyimpan berita berhasil")
+      })
+      .catch((e) => {
+        console.log(e)
+        alert(`Menyimpan berita gagal`)
+      })
+})
+
+btnGenerate.addEventListener("click", (e) => {
+  e.preventDefault()
+
+  fetch("/generate-document", {
+    method: "POST",
+  })
+    .then(() => {
+      alert("Berita berhasil dibuat")
+    })
+    .catch((e) => {
+      alert("Berita gagal dibuat")
+    })
+})
+
+jsonInput.addEventListener("change", async (e) => {
+  e.preventDefault()
+
+  const reader = new FileReader()
+
+  reader.onload = function (event) {
+    var jsonObj = JSON.parse(event.target.result)
+    fetch("/load-news", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(jsonObj),
+    })
+      .then((res) => {
+        updateData()
+      })
+      .catch((e) => console.log(`News can't be loaded: ${e}`))
+  }
+
+  reader.readAsText(event.target.files[0])
 })
 
 updateData() // Memanggil fungsi untuk memuat berita yang dipilih saat halaman dimuat
