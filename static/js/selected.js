@@ -65,7 +65,7 @@ const Card = (news, id) => {
 const news = []
 
 const getGeneratedNews = (id) => {
-  fetch("/get-generated-news?id=" + id, {
+  fetch("/api/get-generated-news?id=" + id, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -123,7 +123,7 @@ const getGeneratedNews = (id) => {
 
         const formData = new FormData(form)
 
-        fetch("/save-news-data", {
+        fetch("/api/save-news-data", {
           method: "POST",
           body: formData,
         }).then((res) => {
@@ -142,7 +142,7 @@ const getGeneratedNews = (id) => {
 }
 
 const updateData = () => {
-  fetch("/get-selected-news")
+  fetch("/api/get-selected-news")
     .then((response) => response.json())
     .then((data) => {
       const newsListContainer = document.querySelector(".news-list")
@@ -177,7 +177,7 @@ urlInputForm.addEventListener("submit", (e) => {
 
   formData.forEach((val, key) => (object[key] = val))
 
-  fetch("/add-news", {
+  fetch("/api/add-news", {
     method: "POST",
     body: JSON.stringify(object),
     headers: {
@@ -200,7 +200,7 @@ btnClear.addEventListener("click", (e) => {
   e.preventDefault()
 
   if (confirm("Hapus semua berita?"))
-    fetch("/clear-news", {
+    fetch("/api/clear-news", {
       method: "DELETE",
     })
       .then((res) => {
@@ -216,7 +216,7 @@ btnSave.addEventListener("click", (e) => {
   e.preventDefault()
 
   if (confirm("Simpan berita?"))
-    fetch("/save-news", {
+    fetch("/api/save-news", {
       method: "POST",
     })
       .then((res) => {
@@ -231,7 +231,7 @@ btnSave.addEventListener("click", (e) => {
 btnGenerate.addEventListener("click", (e) => {
   e.preventDefault()
 
-  fetch("/generate-document", {
+  fetch("/api/generate-document", {
     method: "POST",
   })
     .then(() => {
@@ -249,7 +249,7 @@ jsonInput.addEventListener("change", async (e) => {
 
   reader.onload = function (event) {
     var jsonObj = JSON.parse(event.target.result)
-    fetch("/load-news", {
+    fetch("/api/load-news", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(jsonObj),

@@ -1,3 +1,4 @@
+import os
 import json, threading
 from time import sleep
 from flask import Flask, render_template, request
@@ -21,6 +22,9 @@ def init_data():
     global settings
     global suggested_news_sources
     global news_sources
+
+    if not os.path.exists(settings_path):
+        reset_settings()
 
     with open(settings_path, mode="r") as file:
         settings = json.load(file)
@@ -51,12 +55,22 @@ def index_page():
     return render_template("index.html", request=request)
 
 
-@app.route("/get-suggested-news-categories")
+@app.route("/selected")
+def selected_page():
+    return render_template("selected.html", news=selected_news)
+
+
+@app.route("/settings")
+def settings_page():
+    return render_template("settings.html")
+
+
+@app.route("/api/get-suggested-news-categories")
 def get_suggested_news_categories():
     return settings["suggestedNewsCategory"]
 
 
-@app.route("/get-suggested-news")
+@app.route("/api/get-suggested-news")
 def get_suggested_news():
     category = request.args.get("category")
 
@@ -67,7 +81,7 @@ def get_suggested_news():
     return json.dumps(news)
 
 
-@app.route("/add-news", methods=["POST"])
+@app.route("/api/add-news", methods=["POST"])
 def add_news():
     req = request.json
     news_url = req.get("url")
@@ -98,17 +112,12 @@ def add_news():
     return {"msg": "News has been added"}
 
 
-@app.route("/get-selected-news")
+@app.route("/api/get-selected-news")
 def get_selected_news():
     return json.dumps(selected_news)
 
 
-@app.route("/selected")
-def selected_page():
-    return render_template("selected.html", news=selected_news)
-
-
-@app.route("/get-generated-news")
+@app.route("/api/get-generated-news")
 def get_generated_news():
     requested_id = request.args.get("id")
 
@@ -125,7 +134,7 @@ def get_generated_news():
         return json.dumps(news)
 
 
-@app.route("/save-news-data", methods=["POST"])
+@app.route("/api/save-news-data", methods=["POST"])
 def save_news_data():
     news = request.form
 
@@ -138,7 +147,7 @@ def save_news_data():
     return "News data saved successfuly"
 
 
-@app.route("/save-news", methods=["POST"])
+@app.route("/api/save-news", methods=["POST"])
 def save_news():
     data = {"selectedNews": selected_news, "generatedNews": generated_news}
 
@@ -147,11 +156,9 @@ def save_news():
     return "News saved successfuly"
 
 
-@app.route("/load-news", methods=["POST"])
+@app.route("/api/load-news", methods=["POST"])
 def load_news():
     data = request.json
-
-    print(data)
 
     global selected_news
     global generated_news
@@ -165,7 +172,7 @@ def load_news():
         return "Error when loading news"
 
 
-@app.route("/delete-news", methods=["DELETE"])
+@app.route("/api/delete-news", methods=["DELETE"])
 def delete_news():
     req = request.json
     news_id = int(req.get("id"))
@@ -179,7 +186,7 @@ def delete_news():
     return "News deleted"
 
 
-@app.route("/clear-news", methods=["DELETE"])
+@app.route("/api/clear-news", methods=["DELETE"])
 def clear_news():
     global selected_news
     global generated_news
@@ -190,7 +197,7 @@ def clear_news():
     return "All news cleared"
 
 
-@app.route("/generate-document", methods=["POST"])
+@app.route("/api/generate-document", methods=["POST"])
 def generate_document():
     document_format = settings["documentFormat"]
 
@@ -210,17 +217,12 @@ def generate_document():
     return "Document created"
 
 
-@app.route("/settings")
-def settings_page():
-    return render_template("settings.html")
-
-
-@app.route("/get-settings")
+@app.route("/api/get-settings")
 def get_settings():
     return json.dumps(settings)
 
 
-@app.route("/set-settings", methods=["POST"])
+@app.route("/api/set-settings", methods=["POST"])
 def set_settings():
     req = request.json
     data = json.dumps(req, indent=2)
@@ -228,12 +230,31 @@ def set_settings():
     try:
         with open(settings_path, "w") as file:
             file.write(data)
-        print("Success")
         init_data()
         return "Set settings success"
     except:
         print("Failed")
         return "Set settings failed"
+
+
+@app.route("/api/reset-settings", methods=["POST"])
+def reset_settings():
+    default_file = os.path.join("config", "default.json")
+    user_file = os.path.join("instance", "settings.json")
+
+    try:
+        with open(default_file, "r") as file:
+            data_default = json.load(file)
+
+        with open(user_file, "w") as file:
+            json.dump(data_default, file, indent=4)
+
+        init_data()
+
+        return "Reset success"
+    except Exception as e:
+        print(e)
+        return "Reset failed"
 
 
 init_data()

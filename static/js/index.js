@@ -24,7 +24,7 @@ const Card = (news) => `
                 `
 
 const getSelectedNews = () => {
-  fetch("/get-selected-news")
+  fetch("/api/get-selected-news")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((val, i) => {
@@ -46,7 +46,7 @@ const getSelectedNews = () => {
 }
 
 function addNewsHandler(newsUrl) {
-  fetch("/add-news", {
+  fetch("/api/add-news", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -66,7 +66,7 @@ function addNewsHandler(newsUrl) {
     })
 }
 
-fetch("/get-suggested-news-categories")
+fetch("/api/get-suggested-news-categories")
   .then((res) => res.json())
   .then((data) => {
     data.forEach((d, i) => {
@@ -77,7 +77,7 @@ fetch("/get-suggested-news-categories")
   })
 
 // Load news
-fetch("/get-suggested-news?category=" + suggestedNewsCategory)
+fetch("/api/get-suggested-news?category=" + suggestedNewsCategory)
   .then((response) => response.json())
   .then((data) => {
     if (!data || data.length === 0) {

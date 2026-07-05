@@ -1,7 +1,23 @@
+const settingsForm = document.getElementById("settings-form")
+const resetBtn = document.getElementById("reset-btn")
+
 var categories = []
 
-function renderCategories() {
-  const container = document.getElementById("categoryTagsContainer")
+const initData = () => {
+  fetch("/api/get-settings", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      initFormValues(data)
+    })
+}
+
+const renderCategories = () => {
+  const container = document.getElementById("category-tags-container")
   container.innerHTML = ""
   categories.forEach((cat, index) => {
     const tag = document.createElement("div")
@@ -11,8 +27,8 @@ function renderCategories() {
   })
 }
 
-function addCategoryTag() {
-  const input = document.getElementById("newCategoryInput")
+const addCategoryTag = () => {
+  const input = document.getElementById("new-category-input")
   const val = input.value.trim()
   if (val && !categories.includes(val)) {
     categories.push(val)
@@ -21,13 +37,13 @@ function addCategoryTag() {
   }
 }
 
-function removeCategoryTag(index) {
+const removeCategoryTag = (index) => {
   categories.splice(index, 1)
   renderCategories()
 }
 
-function addSuggestedSourceElement(data = {}) {
-  const container = document.getElementById("suggestedSourcesContainer")
+const addSuggestedSourceElement = (data = {}) => {
+  const container = document.getElementById("suggested-sources-container")
   const div = document.createElement("div")
   div.className = "dynamic-item suggested-source-item"
   div.innerHTML = `
@@ -80,8 +96,8 @@ function addSuggestedSourceElement(data = {}) {
   container.appendChild(div)
 }
 
-function addNewsSourceElement(data = {}) {
-  const container = document.getElementById("newsSourcesContainer")
+const addNewsSourceElement = (data = {}) => {
+  const container = document.getElementById("news-sources-container")
   const div = document.createElement("div")
   div.className = "dynamic-item news-source-item"
   div.innerHTML = `
@@ -120,8 +136,8 @@ function addNewsSourceElement(data = {}) {
   container.appendChild(div)
 }
 
-function addClassementSourceElement(data = { width: 1, height: 1 }) {
-  const container = document.getElementById("classementSourcesContainer")
+const addClassementSourceElement = (data = { width: 1, height: 1 }) => {
+  const container = document.getElementById("classement-sources-container")
   const div = document.createElement("div")
   div.className = "dynamic-item classement-source-item"
   div.innerHTML = `
@@ -152,7 +168,7 @@ function addClassementSourceElement(data = { width: 1, height: 1 }) {
   container.appendChild(div)
 }
 
-function initFormValues(initialSettings) {
+const initFormValues = (initialSettings) => {
   categories = [...initialSettings.suggestedNewsCategory]
 
   renderCategories()
@@ -166,129 +182,124 @@ function initFormValues(initialSettings) {
     addClassementSourceElement(src),
   )
 
-  document.getElementById("groqModel").value = initialSettings.groqModel
-  document.getElementById("groqAPIKey").value = initialSettings.groqAPIKey
-  document.getElementById("groqSystemPrompt").value =
+  document.getElementById("groq-model").value = initialSettings.groqModel
+  document.getElementById("groq-api-key").value = initialSettings.groqAPIKey
+  document.getElementById("groq-system-prompt").value =
     initialSettings.groqSystemPrompt || ""
-  document.getElementById("userAgent").value =
+  document.getElementById("user-agent").value =
     initialSettings.headers["User-Agent"]
 
   const docFmt = initialSettings.documentFormat
-  document.getElementById("titleFont").value = docFmt.titleFont
-  document.getElementById("titleSize").value = docFmt.titleSize
-  document.getElementById("titleBold").checked = docFmt.titleBold
-  document.getElementById("paragraphFont").value = docFmt.paragraphFont
-  document.getElementById("paragraphSize").value = docFmt.paragraphSize
-  document.getElementById("imageHeight").value = docFmt.imageHeight
-  document.getElementById("pageWidth").value = docFmt.pageWidth
-  document.getElementById("pageHeight").value = docFmt.pageHeight
-  document.getElementById("pageMtop").value = docFmt.pageMtop
-  document.getElementById("pageMbot").value = docFmt.pageMbot
-  document.getElementById("pageMlef").value = docFmt.pageMlef
-  document.getElementById("pageMrig").value = docFmt.pageMrig
+  document.getElementById("title-font").value = docFmt.titleFont
+  document.getElementById("title-size").value = docFmt.titleSize
+  document.getElementById("title-bold").checked = docFmt.titleBold
+  document.getElementById("paragraph-font").value = docFmt.paragraphFont
+  document.getElementById("paragraph-size").value = docFmt.paragraphSize
+  document.getElementById("image-height").value = docFmt.imageHeight
+  document.getElementById("page-width").value = docFmt.pageWidth
+  document.getElementById("page-height").value = docFmt.pageHeight
+  document.getElementById("page-mtop").value = docFmt.pageMtop
+  document.getElementById("page-mbot").value = docFmt.pageMbot
+  document.getElementById("page-mlef").value = docFmt.pageMlef
+  document.getElementById("page-mrig").value = docFmt.pageMrig
 }
 
-document
-  .getElementById("settingsForm")
-  .addEventListener("submit", function (e) {
-    e.preventDefault()
+settingsForm.addEventListener("submit", function (e) {
+  e.preventDefault()
 
-    const suggestedNewsSources = []
-    document.querySelectorAll(".suggested-source-item").forEach((item) => {
-      suggestedNewsSources.push({
-        prefix: item.querySelector(".src-prefix").value,
-        url: item.querySelector(".src-url").value,
-        category: item.querySelector(".src-category").value,
-        articleQuery: item.querySelector(".src-article-query").value,
-        titleQuery: item.querySelector(".src-title-query").value,
-        categoryQuery: item.querySelector(".src-category-query").value,
-        linkQuery: item.querySelector(".src-link-query").value,
-        dateQuery: item.querySelector(".src-date-query").value,
-        imageQuery: item.querySelector(".src-image-query").value,
-      })
+  const suggestedNewsSources = []
+  document.querySelectorAll(".suggested-source-item").forEach((item) => {
+    suggestedNewsSources.push({
+      prefix: item.querySelector(".src-prefix").value,
+      url: item.querySelector(".src-url").value,
+      category: item.querySelector(".src-category").value,
+      articleQuery: item.querySelector(".src-article-query").value,
+      titleQuery: item.querySelector(".src-title-query").value,
+      categoryQuery: item.querySelector(".src-category-query").value,
+      linkQuery: item.querySelector(".src-link-query").value,
+      dateQuery: item.querySelector(".src-date-query").value,
+      imageQuery: item.querySelector(".src-image-query").value,
     })
-
-    const newsSources = []
-    document.querySelectorAll(".news-source-item").forEach((item) => {
-      newsSources.push({
-        prefix: item.querySelector(".ns-prefix").value,
-        titleQuery: item.querySelector(".ns-title-query").value,
-        paragraphQuery: item.querySelector(".ns-paragraph-query").value,
-        categoryQuery: item.querySelector(".ns-category-query").value,
-        dateQuery: item.querySelector(".ns-date-query").value,
-        imageQuery: item.querySelector(".ns-image-query").value,
-      })
-    })
-
-    const classementSources = []
-    document.querySelectorAll(".classement-source-item").forEach((item) => {
-      classementSources.push({
-        url: item.querySelector(".ns-url").value,
-        tableQuery: item.querySelector(".ns-table-query").value,
-        width: item.querySelector(".ns-width").value,
-        height: item.querySelector(".ns-height").value,
-      })
-    })
-
-    const updatedSettings = {
-      suggestedNewsCategory: categories,
-      suggestedNewsSources: suggestedNewsSources,
-      newsSources: newsSources,
-      classementSources: classementSources,
-      groqModel: document.getElementById("groqModel").value,
-      groqAPIKey: document.getElementById("groqAPIKey").value,
-      groqSystemPrompt: document.getElementById("groqSystemPrompt").value,
-      headers: {
-        "User-Agent": document.getElementById("userAgent").value,
-      },
-      documentFormat: {
-        titleFont: document.getElementById("titleFont").value,
-        titleSize: parseInt(document.getElementById("titleSize").value) || 0,
-        titleBold: document.getElementById("titleBold").checked,
-        imageHeight:
-          parseFloat(document.getElementById("imageHeight").value) || 0,
-        paragraphFont: document.getElementById("paragraphFont").value,
-        paragraphSize:
-          parseInt(document.getElementById("paragraphSize").value) || 0,
-        pageWidth: parseFloat(document.getElementById("pageWidth").value) || 0,
-        pageHeight:
-          parseFloat(document.getElementById("pageHeight").value) || 0,
-        pageMtop: parseFloat(document.getElementById("pageMtop").value) || 0,
-        pageMbot: parseFloat(document.getElementById("pageMbot").value) || 0,
-        pageMlef: parseFloat(document.getElementById("pageMlef").value) || 0,
-        pageMrig: parseFloat(document.getElementById("pageMrig").value) || 0,
-      },
-    }
-
-    console.log("Payload yang dikirim:", updatedSettings)
-
-    fetch("/set-settings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedSettings),
-    })
-      .then((response) => {
-        if (response.ok) {
-          alert("Pengaturan berhasil disimpan!")
-        } else {
-          alert("Gagal menyimpan pengaturan, periksa server Anda.")
-        }
-      })
-      .catch((err) => {
-        console.error("Error:", err)
-        alert("Terjadi kesalahan jaringan.")
-      })
   })
 
-fetch("/get-settings", {
-  headers: {
-    "Content-Type": "application/json",
-  },
+  const newsSources = []
+  document.querySelectorAll(".news-source-item").forEach((item) => {
+    newsSources.push({
+      prefix: item.querySelector(".ns-prefix").value,
+      titleQuery: item.querySelector(".ns-title-query").value,
+      paragraphQuery: item.querySelector(".ns-paragraph-query").value,
+      categoryQuery: item.querySelector(".ns-category-query").value,
+      dateQuery: item.querySelector(".ns-date-query").value,
+      imageQuery: item.querySelector(".ns-image-query").value,
+    })
+  })
+
+  const classementSources = []
+  document.querySelectorAll(".classement-source-item").forEach((item) => {
+    classementSources.push({
+      url: item.querySelector(".ns-url").value,
+      tableQuery: item.querySelector(".ns-table-query").value,
+      width: item.querySelector(".ns-width").value,
+      height: item.querySelector(".ns-height").value,
+    })
+  })
+
+  const updatedSettings = {
+    suggestedNewsCategory: categories,
+    suggestedNewsSources: suggestedNewsSources,
+    newsSources: newsSources,
+    classementSources: classementSources,
+    groqModel: document.getElementById("groq-model").value,
+    groqAPIKey: document.getElementById("groq-api-key").value,
+    groqSystemPrompt: document.getElementById("groq-system-prompt").value,
+    headers: {
+      "User-Agent": document.getElementById("user-agent").value,
+    },
+    documentFormat: {
+      titleFont: document.getElementById("title-font").value,
+      titleSize: parseInt(document.getElementById("title-size").value) || 0,
+      titleBold: document.getElementById("title-bold").checked,
+      imageHeight:
+        parseFloat(document.getElementById("image-height").value) || 0,
+      paragraphFont: document.getElementById("paragraph-font").value,
+      paragraphSize:
+        parseInt(document.getElementById("paragraph-size").value) || 0,
+      pageWidth: parseFloat(document.getElementById("page-width").value) || 0,
+      pageHeight: parseFloat(document.getElementById("page-height").value) || 0,
+      pageMtop: parseFloat(document.getElementById("page-mtop").value) || 0,
+      pageMbot: parseFloat(document.getElementById("page-mbot").value) || 0,
+      pageMlef: parseFloat(document.getElementById("page-mlef").value) || 0,
+      pageMrig: parseFloat(document.getElementById("page-mrig").value) || 0,
+    },
+  }
+
+  fetch("/api/set-settings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedSettings),
+  })
+    .then((response) => {
+      if (response.ok) {
+        alert("Pengaturan berhasil disimpan!")
+      } else {
+        alert("Gagal menyimpan pengaturan, periksa server Anda.")
+      }
+    })
+    .catch((err) => {
+      console.error("Error:", err)
+      alert("Terjadi kesalahan jaringan.")
+    })
 })
-  .then((res) => res.json())
-  .then((data) => {
-    console.log(data)
-    initFormValues(data)
-  })
+
+resetBtn.addEventListener("click", (e) => {
+  e.preventDefault()
+
+  if (confirm("Semua setelan akan direset ke setelan pabrik"))
+    fetch("/api/reset-settings", { method: "POST" })
+      .then(() => initData())
+      .catch((e) => alert("Gagal mereset setelan"))
+})
+
+initData()

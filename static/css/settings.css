@@ -37,6 +37,19 @@ body {
   left: 10px;
 }
 
+.reset-btn {
+  position: absolute;
+  color: #e74c3c;
+  font-weight: bold;
+  border: none;
+  background: none;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  top: 10px;
+  right: 10px;
+}
+
 .container {
   width: 100%;
   max-width: 900px;
