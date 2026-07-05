@@ -1,10 +1,9 @@
 import datetime, math, os, json
 
-# from libs import scrape
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt, Inches
-from libs.scrape import get_classements, scrape_image_to_bytes
+from core.scrape import get_classements, scrape_image_to_bytes
 
 # hti = Html2Image()
 document = Document()

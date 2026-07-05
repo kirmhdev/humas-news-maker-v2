@@ -1,9 +1,9 @@
 import json, threading
 from time import sleep
 from flask import Flask, render_template, request
-from libs.scrape import scrape_news_from_source, scrape_suggested_news
-from libs.generate import generate_news
-from libs.document import create_document, save_news_to_json
+from core.scrape import scrape_news_from_source, scrape_suggested_news
+from core.generate import generate_news
+from core.document import create_document, save_news_to_json
 
 app = Flask(__name__)
 
@@ -14,6 +14,7 @@ news_sources = []
 selected_news = []  # List untuk menyimpan berita yang dipilih
 generated_news = []  # List untuk menyimpan berita yang dihasilkan
 news_id_counter = 0  # Counter untuk memberikan ID unik pada berita
+settings_path = "instance/settings.json"
 
 
 def init_data():
@@ -21,7 +22,7 @@ def init_data():
     global suggested_news_sources
     global news_sources
 
-    with open("settings.json", mode="r") as file:
+    with open(settings_path, mode="r") as file:
         settings = json.load(file)
 
     suggested_news_sources = settings["suggestedNewsSources"]
@@ -225,7 +226,7 @@ def set_settings():
     data = json.dumps(req, indent=2)
 
     try:
-        with open("settings.json", "w") as file:
+        with open(settings_path, "w") as file:
             file.write(data)
         print("Success")
         init_data()

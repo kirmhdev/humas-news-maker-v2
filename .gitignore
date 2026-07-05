@@ -1,3 +1,4 @@
 .env
-OUT/*
-*.pyc
+.cache/
+OUT/
+instance/
