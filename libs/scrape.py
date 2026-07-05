@@ -1,6 +1,8 @@
 from io import BytesIO
+import os
 
 from bs4 import BeautifulSoup
+from html2image import Html2Image
 import requests
 import tldextract
 
@@ -14,15 +16,14 @@ def scrape_suggested_news(sources, headers, category):
                 response = requests.get(url, headers=headers, timeout=5)
                 soup = BeautifulSoup(response.text, "html.parser")
 
-                # Mencari elemen artikel (Struktur HTML Kompas bisa berubah sewaktu-waktu)
-                article_list = soup.select(source["article_query"])
+                article_list = soup.select(source["articleQuery"])
 
                 for article in article_list:
-                    title_tag = article.select_one(source["title_query"])
-                    category_tag = article.select_one(source["category_query"])
-                    link_tag = article.select_one(source["link_query"])
-                    date_tag = article.select_one(source["date_query"])
-                    img_tag = article.select_one(source["image_query"])
+                    title_tag = article.select_one(source["titleQuery"])
+                    category_tag = article.select_one(source["categoryQuery"])
+                    link_tag = article.select_one(source["linkQuery"])
+                    date_tag = article.select_one(source["dateQuery"])
+                    img_tag = article.select_one(source["imageQuery"])
 
                     news_list.append(
                         {
@@ -36,12 +37,12 @@ def scrape_suggested_news(sources, headers, category):
                                 category_tag.text.replace("\n", " ").strip()
                                 if category_tag is not None
                                 else ""
-                            ),  # Kategori default jika sulit di-scrape di halaman depan
+                            ),
                             "date": (
                                 date_tag.text.replace("\n", " ").strip()
                                 if date_tag is not None
                                 else ""
-                            ),  # Menggunakan tanggal hari ini untuk simpelnya
+                            ),
                             "image": img_tag.get("src") or img_tag.get("data-src"),
                             "url": link_tag.get("href"),
                         }
@@ -63,11 +64,11 @@ def scrape_news_from_source(id, url, headers, sources):
         response = requests.get(url, headers=headers, timeout=5)
         soup = BeautifulSoup(response.text, "html.parser")
 
-        title_tag = soup.select_one(source["title_query"])
-        category_tag = soup.select_one(source["category_query"])
-        date_tag = soup.select_one(source["date_query"])
-        img_tag = soup.select_one(source["image_query"])
-        paragraph_tag = soup.select(source["paragraph_query"])
+        title_tag = soup.select_one(source["titleQuery"])
+        category_tag = soup.select_one(source["categoryQuery"])
+        date_tag = soup.select_one(source["dateQuery"])
+        img_tag = soup.select_one(source["imageQuery"])
+        paragraph_tag = soup.select(source["paragraphQuery"])
         body = ""
 
         for p in paragraph_tag:
@@ -107,3 +108,24 @@ def scrape_image_to_bytes(url, headers):
     res = requests.get(url=url, headers=headers)
     img_stream = BytesIO(res.content)
     return img_stream
+
+
+def get_classements(source):
+    response = requests.get(source["url"])
+    element = BeautifulSoup(response.content, "html.parser")
+
+    cache_dir = ".cache/"
+    os.makedirs(cache_dir, exist_ok=True)
+
+    hti = Html2Image()
+    hti.output_path = cache_dir
+    styles = "".join(
+        map(lambda x: str(x), element.find_all("link", {"rel": "stylesheet"}))
+    )
+    table = element.find("div", {"class": source["tableQuery"]})
+    final_table = f"{styles}{table}"
+
+    hti.screenshot(
+        html_str=final_table,
+        size=(int(source["width"]), int(source["height"])),
+    )

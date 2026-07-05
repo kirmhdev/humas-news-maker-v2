@@ -4,7 +4,7 @@ import datetime, math, os, json
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt, Inches
-from libs.scrape import scrape_image_to_bytes
+from libs.scrape import get_classements, scrape_image_to_bytes
 
 # hti = Html2Image()
 document = Document()
@@ -68,13 +68,7 @@ def create_pages(data, format, headers):
             document.add_page_break()
 
 
-# def create_classements(classement_list):
-#     for classement in classement_list:
-#         scrape.get_classement(classement)
-#         document.add_picture(".cache/screenshot.png", width=Inches(4.3))
-
-
-def create_document(data, format, headers, root_out_dir):
+def create_document(data, format, headers, root_out_dir, classement_sources):
     create_pages(data, format, headers=headers)
 
     section = document.sections[0]
@@ -87,8 +81,9 @@ def create_document(data, format, headers, root_out_dir):
 
     document.add_page_break()
 
-    # if use_classements:
-    #     create_classements(classement_list)
+    for classement_source in classement_sources:
+        get_classements(classement_source)
+        document.add_picture(".cache/screenshot.png", width=Inches(4.3))
 
     out_filename = get_out_filename(root_out_dir)
 

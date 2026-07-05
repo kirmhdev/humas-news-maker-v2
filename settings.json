@@ -11,74 +11,94 @@
       "prefix": "kompas.com",
       "url": "https://indeks.kompas.com/?site=nasional",
       "category": "Nasional",
-      "article_query": "div.articleItem",
-      "title_query": "h2.articleTitle",
-      "category_query": "div.articlePost-subtitle",
-      "link_query": "a",
-      "date_query": "div.articlePost-date",
-      "image_query": "div.articleItem-img > img"
+      "articleQuery": "div.articleItem",
+      "titleQuery": "h2.articleTitle",
+      "categoryQuery": "div.articlePost-subtitle",
+      "linkQuery": "a",
+      "dateQuery": "div.articlePost-date",
+      "imageQuery": "div.articleItem-img > img"
     },
     {
       "prefix": "kompas.com",
       "url": "https://indeks.kompas.com/?site=global",
       "category": "Internasional",
-      "article_query": "div.articleItem",
-      "title_query": "h2.articleTitle",
-      "category_query": "div.articlePost-subtitle",
-      "link_query": "a",
-      "date_query": "div.articlePost-date",
-      "image_query": "div.articleItem-img > img"
+      "articleQuery": "div.articleItem",
+      "titleQuery": "h2.articleTitle",
+      "categoryQuery": "div.articlePost-subtitle",
+      "linkQuery": "a",
+      "dateQuery": "div.articlePost-date",
+      "imageQuery": "div.articleItem-img > img"
     },
     {
       "prefix": "kompas.com",
       "url": "https://indeks.kompas.com/?site=tekno",
       "category": "Tech",
-      "article_query": "div.articleItem",
-      "title_query": "h2.articleTitle",
-      "category_query": "div.articlePost-subtitle",
-      "link_query": "a",
-      "date_query": "div.articlePost-date",
-      "image_query": "div.articleItem-img > img"
+      "articleQuery": "div.articleItem",
+      "titleQuery": "h2.articleTitle",
+      "categoryQuery": "div.articlePost-subtitle",
+      "linkQuery": "a",
+      "dateQuery": "div.articlePost-date",
+      "imageQuery": "div.articleItem-img > img"
     },
     {
       "prefix": "kompas.com",
       "url": "https://indeks.kompas.com/?site=bola",
       "category": "Sport",
-      "article_query": "div.articleItem",
-      "title_query": "h2.articleTitle",
-      "category_query": "div.articlePost-subtitle",
-      "link_query": "a",
-      "date_query": "div.articlePost-date",
-      "image_query": "div.articleItem-img > img"
+      "articleQuery": "div.articleItem",
+      "titleQuery": "h2.articleTitle",
+      "categoryQuery": "div.articlePost-subtitle",
+      "linkQuery": "a",
+      "dateQuery": "div.articlePost-date",
+      "imageQuery": "div.articleItem-img > img"
     },
     {
       "prefix": "kompas.com",
       "url": "https://indeks.kompas.com/?site=hype",
       "category": "Entertainment",
-      "article_query": "div.articleItem",
-      "title_query": "h2.articleTitle",
-      "category_query": "div.articlePost-subtitle",
-      "link_query": "a",
-      "date_query": "div.articlePost-date",
-      "image_query": "div.articleItem-img > img"
+      "articleQuery": "div.articleItem",
+      "titleQuery": "h2.articleTitle",
+      "categoryQuery": "div.articlePost-subtitle",
+      "linkQuery": "a",
+      "dateQuery": "div.articlePost-date",
+      "imageQuery": "div.articleItem-img > img"
     }
   ],
   "newsSources": [
     {
       "prefix": "kompas.com",
-      "title_query": "h1.read__title",
-      "paragraph_query": "div.clearfix > p",
-      "category_query": "ul.breadcrumb__wrap > li:nth-child(2) > a",
-      "date_query": "div.read__time",
-      "image_query": "div.photo__wrap > img"
+      "titleQuery": "h1.read__title",
+      "paragraphQuery": "div.clearfix > p",
+      "categoryQuery": "ul.breadcrumb__wrap > li:nth-child(2) > a",
+      "dateQuery": "div.read__time",
+      "imageQuery": "div.photo__wrap > img"
     },
     {
       "prefix": "detik.com",
-      "title_query": "h1.detail__title",
-      "paragraph_query": "div.detail__body-text > p",
-      "category_query": "span.detail__label",
-      "date_query": "div.detail__date",
-      "image_query": "img.img-zoomin"
+      "titleQuery": "h1.detail__title",
+      "paragraphQuery": "div.detail__body-text > p",
+      "categoryQuery": "span.detail__label",
+      "dateQuery": "div.detail__date",
+      "imageQuery": "img.img-zoomin"
+    }
+  ],
+  "classementSources": [
+    {
+      "url": "https://bola.kompas.com/klasemen/liga-indonesia",
+      "tableQuery": "standing-table",
+      "width": "740",
+      "height": "961"
+    },
+    {
+      "url": "https://bola.kompas.com/klasemen/liga-inggris",
+      "tableQuery": "standing-table",
+      "width": "740",
+      "height": "961"
+    },
+    {
+      "url": "https://bola.kompas.com/klasemen/liga-spanyol",
+      "tableQuery": "standing-table",
+      "width": "740",
+      "height": "961"
     }
   ],
   "groqModel": "openai/gpt-oss-120b",
@@ -99,7 +119,6 @@
     "pageMtop": 0.5,
     "pageMbot": 0.5,
     "pageMlef": 0.5,
-    "pageMrig": 0.5,
-    "useFooter": false
+    "pageMrig": 0.5
   }
 }

@@ -198,7 +198,13 @@ def generate_document():
 
     save_news()
 
-    create_document(generated_news, document_format, settings["headers"], "OUT")
+    create_document(
+        generated_news,
+        document_format,
+        settings["headers"],
+        "OUT",
+        settings["classementSources"],
+    )
 
     return "Document created"
 

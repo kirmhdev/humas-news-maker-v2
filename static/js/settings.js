@@ -1,6 +1,5 @@
 var categories = []
 
-// Fungsi Render Tag Kategori
 function renderCategories() {
   const container = document.getElementById("categoryTagsContainer")
   container.innerHTML = ""
@@ -27,7 +26,6 @@ function removeCategoryTag(index) {
   renderCategories()
 }
 
-// Fungsi Render Dinamis untuk Suggested News Sources
 function addSuggestedSourceElement(data = {}) {
   const container = document.getElementById("suggestedSourcesContainer")
   const div = document.createElement("div")
@@ -51,38 +49,37 @@ function addSuggestedSourceElement(data = {}) {
             <div class="form-row">
                 <div class="form-group">
                     <label>Article Query (Wrapper)</label>
-                    <input type="text" class="src-article-query" value="${data.article_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="src-article-query" value="${data.articleQuery || ""}" placeholder="element.class#id">
                 </div>
                 <div class="form-group">
                     <label>Title Query</label>
-                    <input type="text" class="src-title-query" value="${data.title_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="src-title-query" value="${data.titleQuery || ""}" placeholder="element.class#id">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Category Query</label>
-                    <input type="text" class="src-category-query" value="${data.category_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="src-category-query" value="${data.categoryQuery || ""}" placeholder="element.class#id">
                 </div>
                 <div class="form-group">
                     <label>Link Query</label>
-                    <input type="text" class="src-link-query" value="${data.link_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="src-link-query" value="${data.linkQuery || ""}" placeholder="element.class#id">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Date Query</label>
-                    <input type="text" class="src-date-query" value="${data.date_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="src-date-query" value="${data.dateQuery || ""}" placeholder="element.class#id">
                 </div>
                 <div class="form-group">
                     <label>Image Query</label>
-                    <input type="text" class="src-image-query" value="${data.image_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="src-image-query" value="${data.imageQuery || ""}" placeholder="element.class#id">
                 </div>
             </div>
         `
   container.appendChild(div)
 }
 
-// Fungsi Render Dinamis untuk News Body Sources
 function addNewsSourceElement(data = {}) {
   const container = document.getElementById("newsSourcesContainer")
   const div = document.createElement("div")
@@ -96,48 +93,79 @@ function addNewsSourceElement(data = {}) {
                 </div>
                 <div class="form-group">
                     <label>Title Query (Detail)</label>
-                    <input type="text" class="ns-title-query" value="${data.title_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="ns-title-query" value="${data.titleQuery || ""}" placeholder="element.class#id">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Paragraph Query</label>
-                    <input type="text" class="ns-paragraph-query" value="${data.paragraph_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="ns-paragraph-query" value="${data.paragraphQuery || ""}" placeholder="element.class#id">
                 </div>
                 <div class="form-group">
                     <label>Category Query</label>
-                    <input type="text" class="ns-category-query" value="${data.category_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="ns-category-query" value="${data.categoryQuery || ""}" placeholder="element.class#id">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Date Query</label>
-                    <input type="text" class="ns-date-query" value="${data.date_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="ns-date-query" value="${data.dateQuery || ""}" placeholder="element.class#id">
                 </div>
                 <div class="form-group">
                     <label>Image Query</label>
-                    <input type="text" class="ns-image-query" value="${data.image_query || ""}" placeholder="element.class#id">
+                    <input type="text" class="ns-image-query" value="${data.imageQuery || ""}" placeholder="element.class#id">
                 </div>
             </div>
         `
   container.appendChild(div)
 }
 
-// Mengisi form berdasarkan initial JSON saat halaman dimuat
+function addClassementSourceElement(data = { width: 1, height: 1 }) {
+  const container = document.getElementById("classementSourcesContainer")
+  const div = document.createElement("div")
+  div.className = "dynamic-item classement-source-item"
+  div.innerHTML = `
+            <button type="button" class="btn btn-danger remove-btn" onclick="this.parentElement.remove()">Hapus</button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" class="ns-url" value="${data.url || ""}" placeholder="https://example.xyz/...">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Table Query</label>
+                    <input type="text" class="ns-table-query" value="${data.tableQuery || ""}" placeholder="element.class#id">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Width</label>
+                    <input type="number" class="ns-width" value="${data.width || ""}" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Height</label>
+                    <input type="number" class="ns-height" value="${data.height || ""}" min="1">
+                </div>
+            </div>
+        `
+  container.appendChild(div)
+}
+
 function initFormValues(initialSettings) {
   categories = [...initialSettings.suggestedNewsCategory]
 
   renderCategories()
 
-  // Load Suggested News Sources
   initialSettings.suggestedNewsSources.forEach((src) =>
     addSuggestedSourceElement(src),
   )
 
-  // Load News Sources
   initialSettings.newsSources.forEach((src) => addNewsSourceElement(src))
+  initialSettings.classementSources.forEach((src) =>
+    addClassementSourceElement(src),
+  )
 
-  // API & Engine Settings
   document.getElementById("groqModel").value = initialSettings.groqModel
   document.getElementById("groqAPIKey").value = initialSettings.groqAPIKey
   document.getElementById("groqSystemPrompt").value =
@@ -145,7 +173,6 @@ function initFormValues(initialSettings) {
   document.getElementById("userAgent").value =
     initialSettings.headers["User-Agent"]
 
-  // Document Layout
   const docFmt = initialSettings.documentFormat
   document.getElementById("titleFont").value = docFmt.titleFont
   document.getElementById("titleSize").value = docFmt.titleSize
@@ -159,49 +186,55 @@ function initFormValues(initialSettings) {
   document.getElementById("pageMbot").value = docFmt.pageMbot
   document.getElementById("pageMlef").value = docFmt.pageMlef
   document.getElementById("pageMrig").value = docFmt.pageMrig
-  document.getElementById("useFooter").checked = docFmt.useFooter
 }
 
-// Handler saat user mengklik Save Settings
 document
   .getElementById("settingsForm")
   .addEventListener("submit", function (e) {
     e.preventDefault()
 
-    // 1. Ekstrak data dynamic Suggested News Sources
     const suggestedNewsSources = []
     document.querySelectorAll(".suggested-source-item").forEach((item) => {
       suggestedNewsSources.push({
         prefix: item.querySelector(".src-prefix").value,
         url: item.querySelector(".src-url").value,
         category: item.querySelector(".src-category").value,
-        article_query: item.querySelector(".src-article-query").value,
-        title_query: item.querySelector(".src-title-query").value,
-        category_query: item.querySelector(".src-category-query").value,
-        link_query: item.querySelector(".src-link-query").value,
-        date_query: item.querySelector(".src-date-query").value,
-        image_query: item.querySelector(".src-image-query").value,
+        articleQuery: item.querySelector(".src-article-query").value,
+        titleQuery: item.querySelector(".src-title-query").value,
+        categoryQuery: item.querySelector(".src-category-query").value,
+        linkQuery: item.querySelector(".src-link-query").value,
+        dateQuery: item.querySelector(".src-date-query").value,
+        imageQuery: item.querySelector(".src-image-query").value,
       })
     })
 
-    // 2. Ekstrak data dynamic News Sources
     const newsSources = []
     document.querySelectorAll(".news-source-item").forEach((item) => {
       newsSources.push({
         prefix: item.querySelector(".ns-prefix").value,
-        title_query: item.querySelector(".ns-title-query").value,
-        paragraph_query: item.querySelector(".ns-paragraph-query").value,
-        category_query: item.querySelector(".ns-category-query").value,
-        date_query: item.querySelector(".ns-date-query").value,
-        image_query: item.querySelector(".ns-image-query").value,
+        titleQuery: item.querySelector(".ns-title-query").value,
+        paragraphQuery: item.querySelector(".ns-paragraph-query").value,
+        categoryQuery: item.querySelector(".ns-category-query").value,
+        dateQuery: item.querySelector(".ns-date-query").value,
+        imageQuery: item.querySelector(".ns-image-query").value,
       })
     })
 
-    // 3. Bangun kembali payload object JSON
+    const classementSources = []
+    document.querySelectorAll(".classement-source-item").forEach((item) => {
+      classementSources.push({
+        url: item.querySelector(".ns-url").value,
+        tableQuery: item.querySelector(".ns-table-query").value,
+        width: item.querySelector(".ns-width").value,
+        height: item.querySelector(".ns-height").value,
+      })
+    })
+
     const updatedSettings = {
       suggestedNewsCategory: categories,
       suggestedNewsSources: suggestedNewsSources,
       newsSources: newsSources,
+      classementSources: classementSources,
       groqModel: document.getElementById("groqModel").value,
       groqAPIKey: document.getElementById("groqAPIKey").value,
       groqSystemPrompt: document.getElementById("groqSystemPrompt").value,
@@ -224,13 +257,11 @@ document
         pageMbot: parseFloat(document.getElementById("pageMbot").value) || 0,
         pageMlef: parseFloat(document.getElementById("pageMlef").value) || 0,
         pageMrig: parseFloat(document.getElementById("pageMrig").value) || 0,
-        useFooter: document.getElementById("useFooter").checked,
       },
     }
 
     console.log("Payload yang dikirim:", updatedSettings)
 
-    // 4. Kirim data ke backend endpoint "/save-setting" via Fetch POST
     fetch("/set-settings", {
       method: "POST",
       headers: {
