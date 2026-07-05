@@ -23,6 +23,11 @@
   cursor: pointer;
 }
 
+.card-image-loading {
+  opacity: 0.8;
+  cursor: progress;
+}
+
 .card-image-selected {
   opacity: 0.3;
   cursor: not-allowed;

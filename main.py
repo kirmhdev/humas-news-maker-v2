@@ -1,4 +1,4 @@
-import json, threading, os
+import json, threading, os, queue
 from time import sleep
 from flask import Flask, render_template, request
 from core.scrape import scrape_news_from_source, scrape_suggested_news
@@ -15,6 +15,7 @@ news_sources = []
 selected_news = []
 generated_news = []
 news_id_counter = 0
+news_queue = queue.Queue()
 
 
 def init_data():
@@ -32,7 +33,7 @@ def init_data():
     news_sources = settings["newsSources"]
 
 
-def generate_news_thread(data):
+def generate_news_worker(data):
     if data == None:
         return
 
@@ -50,6 +51,32 @@ def generate_news_thread(data):
     }
 
     generated_news.append(news)
+
+
+def scrape_news_worker(thread_queue, delay):
+    while True:
+        news_url = thread_queue.get("url")
+
+        for news in selected_news:
+            if news["url"] == news_url:
+                return {"msg": "News already exist"}
+
+        global news_id_counter
+
+        data = scrape_news_from_source(
+            news_id_counter, news_url, settings["headers"], news_sources
+        )
+
+        if str(data).startswith("No scraping rules"):
+            return {"msg": data}
+
+        news_id_counter += 1
+        selected_news.append(data)
+
+        threading.Thread(target=generate_news_worker, args=(data,)).start()
+
+        sleep(delay)
+        thread_queue.task_done()
 
 
 @app.route("/")
@@ -88,26 +115,14 @@ def add_news():
     req = request.json
     news_url = req.get("url")
 
-    for news in selected_news:
-        if news["url"] == news_url:
-            return {"msg": "News already exist"}
+    news_queue.put(news_url)
 
-    global news_id_counter
+    news = None
 
-    data = None
+    cur_id = news_id_counter
 
-    while data == None:
-        data = scrape_news_from_source(
-            news_id_counter, news_url, settings["headers"], news_sources
-        )
-
-    if str(data).startswith("No scraping rules"):
-        return {"msg": data}
-
-    news_id_counter += 1
-    selected_news.append(data)
-
-    threading.Thread(target=generate_news_thread, args=(data,)).start()
+    while news is None:
+        news = next((n for n in generated_news if n["id"] == cur_id), None)
 
     return {"msg": "News has been added"}
 
@@ -122,7 +137,7 @@ def regenerate_news():
 
     data = next((item for item in selected_news if item["id"] == id), None)
 
-    threading.Thread(target=generate_news_thread, args=(data,)).start()
+    threading.Thread(target=generate_news_worker, args=(data,)).start()
 
     return "Regenerate data success"
 
@@ -273,4 +288,7 @@ def reset_settings():
 init_data()
 
 if __name__ == "__main__":
+    news_thread = threading.Thread(target=scrape_news_worker, args=(news_queue, 1))
+    news_thread.daemon = True
+    news_thread.start()
     app.run(debug=True)

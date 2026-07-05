@@ -4,7 +4,7 @@ const selectedNewsCounter = document.querySelector(".selected-news-counter")
 const newsCategoryList = document.querySelector("#news-category-list")
 const suggestedNewsCategory = params.get("category") || "Nasional"
 
-let newsData = [] // Variable to store the fetched news data
+let newsData = []
 
 const Card = (news) => `
             <div class="col">
@@ -45,7 +45,10 @@ const getSelectedNews = () => {
     })
 }
 
-function addNewsHandler(newsUrl) {
+const addNewsHandler = (newsUrl) => {
+  const cardImage = document.getElementById(newsUrl)
+  cardImage.className = "card-image-loading"
+  cardImage.onclick = () => {}
   fetch("/api/add-news", {
     method: "POST",
     headers: {
@@ -55,7 +58,7 @@ function addNewsHandler(newsUrl) {
   })
     .then((res) => {
       if (res.ok) {
-        getSelectedNews() // Update the selected news count after adding
+        getSelectedNews()
       } else {
         alert("Gagal menambahkan berita.")
       }
@@ -88,12 +91,12 @@ fetch("/api/get-suggested-news?category=" + suggestedNewsCategory)
     data.forEach((item) => {
       const card = Card(item)
       document.querySelector(".row").innerHTML += card
-      newsData.push(item) // Store the news item in the array
+      newsData.push(item)
     })
   })
   .catch((error) => {
     console.error("Terjadi kesalahan saat memuat berita:", error)
   })
   .finally(() => {
-    getSelectedNews() // Call the function to update the selected news count on page load
+    getSelectedNews()
   })

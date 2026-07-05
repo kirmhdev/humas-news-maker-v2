@@ -288,4 +288,4 @@ jsonInput.addEventListener("change", async (e) => {
   reader.readAsText(event.target.files[0])
 })
 
-updateData() // Memanggil fungsi untuk memuat berita yang dipilih saat halaman dimuat
+updateData()
