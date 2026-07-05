@@ -1,5 +1,4 @@
-import os
-import json, threading
+import json, threading, os
 from time import sleep
 from flask import Flask, render_template, request
 from core.scrape import scrape_news_from_source, scrape_suggested_news
@@ -9,13 +8,13 @@ from core.document import create_document, save_news_to_json
 app = Flask(__name__)
 
 settings = {}
+settings_path = "instance/settings.json"
 suggested_news_sources = []
 news_sources = []
 
-selected_news = []  # List untuk menyimpan berita yang dipilih
-generated_news = []  # List untuk menyimpan berita yang dihasilkan
-news_id_counter = 0  # Counter untuk memberikan ID unik pada berita
-settings_path = "instance/settings.json"
+selected_news = []
+generated_news = []
+news_id_counter = 0
 
 
 def init_data():
@@ -34,6 +33,9 @@ def init_data():
 
 
 def generate_news_thread(data):
+    if data == None:
+        return
+
     generated_news_data = generate_news(data["body"], settings["groqModel"])
 
     news = {
@@ -47,7 +49,7 @@ def generate_news_thread(data):
         "prefix": data["prefix"],
     }
 
-    generated_news.append(news)  # Simpan berita yang dihasilkan ke dalam list
+    generated_news.append(news)
 
 
 @app.route("/")
@@ -103,13 +105,26 @@ def add_news():
         return {"msg": data}
 
     news_id_counter += 1
-    selected_news.append(data)  # Select news from the first source
+    selected_news.append(data)
 
-    threading.Thread(
-        target=generate_news_thread, args=(data,)
-    ).start()  # Generate news in a separate thread
+    threading.Thread(target=generate_news_thread, args=(data,)).start()
 
     return {"msg": "News has been added"}
+
+
+@app.route("/api/regenerate-news", methods=["POST"])
+def regenerate_news():
+    id = request.json.get("id")
+
+    global generated_news
+
+    generated_news = list(filter(lambda x: x["id"] != id, generated_news))
+
+    data = next((item for item in selected_news if item["id"] == id), None)
+
+    threading.Thread(target=generate_news_thread, args=(data,)).start()
+
+    return "Regenerate data success"
 
 
 @app.route("/api/get-selected-news")
@@ -124,9 +139,7 @@ def get_generated_news():
     if requested_id is not None:
         news = None
 
-        while (
-            news is None
-        ):  # Loop until the generated news with the requested ID is found
+        while news is None:
             news = next(
                 (n for n in generated_news if n["id"] == int(requested_id)), None
             )
@@ -180,8 +193,8 @@ def delete_news():
     global selected_news
     global generated_news
 
-    selected_news = list(filter(lambda item: item.id != news_id, selected_news))
-    generated_news = list(filter(lambda item: item.id != news_id, generated_news))
+    selected_news = list(filter(lambda item: item["id"] != news_id, selected_news))
+    generated_news = list(filter(lambda item: item["id"] != news_id, generated_news))
 
     return "News deleted"
 

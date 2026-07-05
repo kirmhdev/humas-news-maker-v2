@@ -55,91 +55,15 @@ const Card = (news, id) => {
                 </div>
               </div>
               <div class="right-section">
-                <button popovertarget="popover-${id}" class="action-btn" id="edit-btn-${id}" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#3498db"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Z"/></svg></button>
-                <button class="action-btn" id="delete-btn-${id}" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e74c3c"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
-              </div>
+              <button popovertarget="popover-${id}" class="action-btn" id="edit-btn-${id}" title="Edit berita" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#3498db"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Z"/></svg></button>
+              <button class="action-btn" id="regenerate-btn-${id}" title="Buat ulang berita" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#3498db"><path d="M204-318q-22-38-33-78t-11-82q0-134 93-228t227-94h7l-64-64 56-56 160 160-160 160-56-56 64-64h-7q-100 0-170 70.5T240-478q0 26 6 51t18 49l-60 60ZM481-40 321-200l160-160 56 56-64 64h7q100 0 170-70.5T720-482q0-26-6-51t-18-49l60-60q22 38 33 78t11 82q0 134-93 228t-227 94h-7l64 64-56 56Z"/></svg></button>
+              <button class="action-btn" id="delete-btn-${id}" title="Hapus berita" disabled><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e74c3c"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
+            </div>
             </div>
           `
 }
 
 const news = []
-
-const getGeneratedNews = (id) => {
-  fetch("/api/get-generated-news?id=" + id, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      const card = document.querySelector(`#card-${id}`)
-      const titleElement = document.querySelector(`#card-title-${id}`)
-      const editBtn = document.querySelector(`#edit-btn-${id}`)
-      const deleteBtn = document.querySelector(`#delete-btn-${id}`)
-
-      const popover = document.querySelector(`#popover-${id}`)
-      const form = document.querySelector(`#form-${id}`)
-      const idInput = document.querySelector(`#id-${id}`)
-      const titleInput = document.querySelector(`#title-${id}`)
-      const imageInput = document.querySelector(`#image-${id}`)
-      const bodyInput = document.querySelector(`#body-${id}`)
-      const saveBtn = document.querySelector(`#save-btn-${id}`)
-
-      card.className = "card-horizontal" // Mengubah kelas menjadi card-horizontal
-      titleElement.textContent = data.title // Mengubah judul berita
-      editBtn.disabled = false // Mengaktifkan tombol edit
-      deleteBtn.disabled = false
-
-      idInput.value = id
-      titleInput.value = data.title
-      imageInput.value = data.image
-      bodyInput.innerHTML = data.paragraphs.join("\n\n")
-
-      deleteBtn.addEventListener("click", (e) => {
-        e.preventDefault()
-
-        if (confirm(`Hapus ${data.title}?`))
-          fetch(`/delete-news`, {
-            method: "DELETE",
-            body: JSON.stringify({ id }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-            .then(() => console.log(`Berita ${data.title} telah dihapus`))
-            .catch(() => alert("Hapus berita gagal"))
-      })
-
-      popover.addEventListener("toggle", (e) => {
-        if (e.newState == "closed") getGeneratedNews(id)
-      })
-
-      form.addEventListener("submit", (e) => {
-        e.preventDefault()
-
-        saveBtn.disabled = true
-        saveBtn.innerHTML = "Menyimpan..."
-
-        const formData = new FormData(form)
-
-        fetch("/api/save-news-data", {
-          method: "POST",
-          body: formData,
-        }).then((res) => {
-          saveBtn.disabled = false
-          saveBtn.innerHTML = "Simpan"
-          popover.hidePopover()
-        })
-      })
-    })
-    .catch((error) => {
-      console.error(
-        "Terjadi kesalahan saat memuat berita yang dihasilkan:",
-        error,
-      )
-    })
-}
 
 const updateData = () => {
   fetch("/api/get-selected-news")
@@ -163,6 +87,107 @@ const updateData = () => {
     })
     .catch((error) => {
       console.error("Terjadi kesalahan saat memuat berita yang dipilih:", error)
+    })
+}
+
+const getGeneratedNews = (id) => {
+  fetch("/api/get-generated-news?id=" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      const card = document.querySelector(`#card-${id}`)
+      const titleElement = document.querySelector(`#card-title-${id}`)
+      const editBtn = document.querySelector(`#edit-btn-${id}`)
+      const deleteBtn = document.querySelector(`#delete-btn-${id}`)
+      const regenerateBtn = document.querySelector(`#regenerate-btn-${id}`)
+
+      const popover = document.querySelector(`#popover-${id}`)
+      const form = document.querySelector(`#form-${id}`)
+      const idInput = document.querySelector(`#id-${id}`)
+      const titleInput = document.querySelector(`#title-${id}`)
+      const imageInput = document.querySelector(`#image-${id}`)
+      const bodyInput = document.querySelector(`#body-${id}`)
+      const saveBtn = document.querySelector(`#save-btn-${id}`)
+
+      card.className = "card-horizontal"
+      titleElement.textContent = data.title
+      editBtn.disabled = false
+      deleteBtn.disabled = false
+      regenerateBtn.disabled = false
+
+      idInput.value = id
+      titleInput.value = data.title
+      imageInput.value = data.image
+      bodyInput.innerHTML = data.paragraphs.join("\n\n")
+
+      deleteBtn.addEventListener("click", (e) => {
+        e.preventDefault()
+
+        if (confirm(`Hapus ${data.title}?`))
+          fetch(`/api/delete-news`, {
+            method: "DELETE",
+            body: JSON.stringify({ id }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then(() => {
+              console.log(`Berita ${data.title} telah dihapus`)
+              updateData()
+            })
+            .catch(() => alert("Hapus berita gagal"))
+      })
+
+      regenerateBtn.addEventListener("click", (e) => {
+        e.preventDefault()
+
+        if (confirm(`Buat ulang ${data.title}?`))
+          fetch(`/api/regenerate-news`, {
+            method: "POST",
+            body: JSON.stringify({ id }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then(() => {
+              console.log(`Berita ${data.title} telah dibuat ulang`)
+              updateData()
+            })
+            .catch(() => alert("Gagal membuat berita"))
+      })
+
+      popover.addEventListener("toggle", (e) => {
+        if (e.newState == "closed") getGeneratedNews(id)
+      })
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault()
+
+        saveBtn.disabled = true
+        saveBtn.innerHTML = "Menyimpan..."
+
+        const formData = new FormData(form)
+
+        fetch("/api/save-news-data", {
+          method: "POST",
+          body: formData,
+        }).then((res) => {
+          saveBtn.disabled = false
+          saveBtn.innerHTML = "Simpan"
+          popover.hidePopover()
+          updateData()
+        })
+      })
+    })
+    .catch((error) => {
+      console.error(
+        "Terjadi kesalahan saat memuat berita yang dihasilkan:",
+        error,
+      )
     })
 }
 
