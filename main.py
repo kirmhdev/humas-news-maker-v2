@@ -1,4 +1,4 @@
-import json, threading, os, queue, concurrent.futures
+import json, threading, os, queue, concurrent.futures, sys
 from time import sleep
 from flask import Flask, render_template, request
 from core.scrape import scrape_news_from_source, scrape_suggested_news
@@ -6,10 +6,31 @@ from core.generate import generate_news
 from core.document import create_document, save_news_to_json
 from functools import reduce
 
-app = Flask(__name__)
+def open_browser():
+    print("Opening browser browser ke http://127.0.0.1:5000 ...")
+    webbrowser.open_new("http://127.0.0.1:5000")
+
+def get_resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+def get_external_path(relative_path):
+    """Memastikan file dicari di sebelah file .exe berada"""
+    if getattr(sys, 'frozen', False):
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+app = Flask(__name__, 
+            template_folder=get_resource_path('templates'),
+            static_folder=get_resource_path('static'))
 
 settings = {}
-settings_path = os.path.join("instance", "settings.json")
+settings_path = get_external_path(os.path.join("instance", "settings.json"))
 suggested_news_sources = []
 news_sources = []
 
@@ -284,7 +305,7 @@ def set_settings():
 
 @app.route("/api/reset-settings", methods=["POST"])
 def reset_settings():
-    default_file = os.path.join("config", "default.json")
+    default_file = get_resource_path(os.path.join("config", "default.json"))
 
     try:
         os.makedirs(os.path.dirname(settings_path), exist_ok=True)
@@ -305,6 +326,7 @@ def reset_settings():
 init_data()
 
 if __name__ == "__main__":
+    threading.Timer(1.5, open_browser).start()
     news_thread = threading.Thread(target=scrape_news_worker, args=(news_queue, 1))
     news_thread.daemon = True
     news_thread.start()
