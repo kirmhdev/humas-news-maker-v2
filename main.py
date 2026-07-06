@@ -1,4 +1,4 @@
-import json, threading, os, queue, concurrent.futures, sys
+import json, threading, os, queue, concurrent.futures, sys, webbrowser
 from time import sleep
 from flask import Flask, render_template, request
 from core.scrape import scrape_news_from_source, scrape_suggested_news
