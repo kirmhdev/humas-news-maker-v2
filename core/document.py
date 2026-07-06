@@ -1,4 +1,4 @@
-import datetime, math, os, json
+import datetime, os, json
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
