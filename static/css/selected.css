@@ -311,40 +311,23 @@ h1 {
   gap: 15px;
 }
 
-.btn-clear {
+.document-action-btn {
   background: none;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  opacity: 1;
 }
 
-.btn-save {
-  background: none;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+.document-action-btn-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
-.json-input {
-  background: none;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.btn-generate {
-  background: none;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+#json-input {
+  display: none;
 }
 
 /* Responsif untuk layar kecil */

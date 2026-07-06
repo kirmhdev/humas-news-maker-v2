@@ -1,6 +1,7 @@
 const urlInputForm = document.querySelector("#url-input-form")
 const urlInput = document.querySelector("#url-input")
 const urlInputSubmit = document.querySelector("#url-input-submit")
+const documentActionBtns = document.querySelectorAll(".document-action-btn")
 const btnClear = document.querySelector("#btn-clear")
 const btnSave = document.querySelector("#btn-save")
 const btnGenerate = document.querySelector("#btn-generate")
@@ -254,6 +255,11 @@ btnSave.addEventListener("click", (e) => {
 
 btnGenerate.addEventListener("click", (e) => {
   e.preventDefault()
+  for (const btn of documentActionBtns) {
+    btn.disabled = true
+    btn.classList.add("document-action-btn-disabled")
+    jsonInput.disabled = true
+  }
 
   fetch("/api/generate-document", {
     method: "POST",
@@ -263,6 +269,13 @@ btnGenerate.addEventListener("click", (e) => {
     })
     .catch((e) => {
       alert("Berita gagal dibuat")
+    })
+    .finally(() => {
+      for (const btn of documentActionBtns) {
+        btn.disabled = false
+        btn.classList.remove("document-action-btn-disabled")
+        jsonInput.disabled = false
+      }
     })
 })
 
