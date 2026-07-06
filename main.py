@@ -6,6 +6,28 @@ from core.generate import generate_news
 from core.document import create_document, save_news_to_json
 from functools import reduce
 
+def disable_quickedit():
+    """Mematikan QuickEdit Mode di Windows agar terminal tidak gampang hang saat diklik"""
+    if os.name == 'nt':
+        import ctypes
+        try:
+            kernel32 = ctypes.windll.kernel32
+            STD_INPUT_HANDLE = -10
+            ENABLE_QUICK_EDIT_MODE = 0x0040
+
+            # Dapatkan handle dari terminal saat ini
+            handle = kernel32.GetStdHandle(STD_INPUT_HANDLE)
+            mode = ctypes.c_uint32()
+            kernel32.GetConsoleMode(handle, ctypes.byref(mode))
+            
+            # Hapus flag QuickEdit dari mode terminal
+            mode.value &= ~ENABLE_QUICK_EDIT_MODE
+            kernel32.SetConsoleMode(handle, mode)
+        except Exception as e:
+            print(f"Gagal mematikan QuickEdit: {e}")
+
+disable_quickedit()
+
 def open_browser():
     print("Opening browser browser ke http://127.0.0.1:5000 ...")
     webbrowser.open_new("http://127.0.0.1:5000")
