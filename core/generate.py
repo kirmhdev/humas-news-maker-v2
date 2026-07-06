@@ -1,11 +1,8 @@
 import re
 from time import sleep
 from groq import Groq
-from dotenv import load_dotenv
 import os
 import json
-
-load_dotenv()
 
 system_prompt = """Kamu adalah asisten AI yang ahli dalam membaca, menganalisis, dan membuat berita.
 Tugasmu adalah membuat berita dari teks yang diberikan oleh pengguna ke dalam satu judul utama dan beberapa paragraf isi.
@@ -25,8 +22,6 @@ Tugasmu adalah membuat berita dari teks yang diberikan oleh pengguna ke dalam sa
   ]
 }"""
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
 
 def clean_text(text):
     text = re.sub(r"http\S+|www\.\S+", "", text)
@@ -38,7 +33,8 @@ def clean_text(text):
     return text
 
 
-def generate_news(text, model):
+def generate_news(text, model, apiKey):
+    client = Groq(api_key=os.getenv(apiKey))
     cleaned_text = clean_text(text)
     while True:
         try:

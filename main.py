@@ -38,7 +38,9 @@ def generate_news_worker(data):
     if data == None:
         return
 
-    generated_news_data = generate_news(data["body"], settings["groqModel"])
+    generated_news_data = generate_news(
+        data["body"], settings["groqModel"], settings["groqAPIKey"]
+    )
 
     news = {
         "id": data["id"],

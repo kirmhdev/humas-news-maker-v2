@@ -9,58 +9,133 @@
   "suggestedNewsSources": [
     {
       "prefix": "kompas.com",
-      "url": "https://indeks.kompas.com/?site=nasional",
+      "url": "https://nasional.kompas.com/",
       "category": "Nasional",
       "articleQuery": "div.articleItem",
       "titleQuery": "h2.articleTitle",
-      "categoryQuery": "div.articlePost-subtitle",
       "linkQuery": "a",
       "dateQuery": "div.articlePost-date",
       "imageQuery": "div.articleItem-img > img"
     },
     {
       "prefix": "kompas.com",
-      "url": "https://indeks.kompas.com/?site=global",
+      "url": "https://www.kompas.com/global",
       "category": "Internasional",
       "articleQuery": "div.articleItem",
       "titleQuery": "h2.articleTitle",
-      "categoryQuery": "div.articlePost-subtitle",
       "linkQuery": "a",
       "dateQuery": "div.articlePost-date",
       "imageQuery": "div.articleItem-img > img"
     },
     {
       "prefix": "kompas.com",
-      "url": "https://indeks.kompas.com/?site=tekno",
+      "url": "https://tekno.kompas.com/",
       "category": "Tech",
-      "articleQuery": "div.articleItem",
-      "titleQuery": "h2.articleTitle",
-      "categoryQuery": "div.articlePost-subtitle",
+      "articleQuery": ".article__grid:not(.slick-slide)",
+      "titleQuery": "h3.article__title",
       "linkQuery": "a",
-      "dateQuery": "div.articlePost-date",
-      "imageQuery": "div.articleItem-img > img"
+      "dateQuery": "div.article__date",
+      "imageQuery": "img"
     },
     {
       "prefix": "kompas.com",
-      "url": "https://indeks.kompas.com/?site=bola",
+      "url": "https://bola.kompas.com/",
       "category": "Sport",
-      "articleQuery": "div.articleItem",
-      "titleQuery": "h2.articleTitle",
-      "categoryQuery": "div.articlePost-subtitle",
+      "articleQuery": ".article__grid:not(.slick-slide)",
+      "titleQuery": "h3.article__title",
       "linkQuery": "a",
-      "dateQuery": "div.articlePost-date",
-      "imageQuery": "div.articleItem-img > img"
+      "dateQuery": "div.article__date",
+      "imageQuery": "img"
     },
     {
-      "prefix": "kompas.com",
-      "url": "https://indeks.kompas.com/?site=hype",
+      "prefix": "detik.com",
+      "url": "https://news.detik.com/berita",
+      "category": "Nasional",
+      "articleQuery": "article.ph_newsfeed_d",
+      "titleQuery": "div.replace_title",
+      "linkQuery": "a.media__link",
+      "dateQuery": "div.media__date",
+      "imageQuery": ":has(>div.media)"
+    },
+    {
+      "prefix": "detik.com",
+      "url": "https://news.detik.com/internasional",
+      "category": "Internasional",
+      "articleQuery": "article.ph_newsfeed_d",
+      "titleQuery": "div.replace_title",
+      "linkQuery": "a.media__link",
+      "dateQuery": "div.media__date",
+      "imageQuery": ":has(>div.media)"
+    },
+    {
+      "prefix": "detik.com",
+      "url": "https://sport.detik.com/",
+      "category": "Sport",
+      "articleQuery": "article.ph_newsfeed_d",
+      "titleQuery": "h3.media__title",
+      "linkQuery": "a.media__link",
+      "dateQuery": "div.media__date",
+      "imageQuery": ":has(>div.media)"
+    },
+    {
+      "prefix": "detik.com",
+      "url": "https://www.detik.com/pop/",
       "category": "Entertainment",
-      "articleQuery": "div.articleItem",
-      "titleQuery": "h2.articleTitle",
-      "categoryQuery": "div.articlePost-subtitle",
+      "articleQuery": "a[dtr-evt='newsfeed']",
+      "titleQuery": "h2",
       "linkQuery": "a",
-      "dateQuery": "div.articlePost-date",
-      "imageQuery": "div.articleItem-img > img"
+      "dateQuery": "",
+      "imageQuery": "img"
+    },
+    {
+      "prefix": "cnnindonesia.com",
+      "url": "https://www.cnnindonesia.com/nasional",
+      "category": "Nasional",
+      "articleQuery": "article",
+      "titleQuery": "h2",
+      "linkQuery": "a",
+      "dateQuery": "",
+      "imageQuery": "img"
+    },
+    {
+      "prefix": "cnnindonesia.com",
+      "url": "https://www.cnnindonesia.com/internasional",
+      "category": "Internasional",
+      "articleQuery": "article",
+      "titleQuery": "h2",
+      "linkQuery": "a",
+      "dateQuery": "",
+      "imageQuery": "img"
+    },
+    {
+      "prefix": "cnnindonesia.com",
+      "url": "https://www.cnnindonesia.com/olahraga",
+      "category": "Sport",
+      "articleQuery": "article",
+      "titleQuery": "h2",
+      "linkQuery": "a",
+      "dateQuery": "",
+      "imageQuery": "img"
+    },
+    {
+      "prefix": "cnnindonesia.com",
+      "url": "https://www.cnnindonesia.com/teknologi",
+      "category": "Tech",
+      "articleQuery": "article",
+      "titleQuery": "h2",
+      "linkQuery": "a",
+      "dateQuery": "",
+      "imageQuery": "img"
+    },
+    {
+      "prefix": "cnnindonesia.com",
+      "url": "https://www.cnnindonesia.com/hiburan",
+      "category": "Entertainment",
+      "articleQuery": "article",
+      "titleQuery": "h2",
+      "linkQuery": "a",
+      "dateQuery": "",
+      "imageQuery": "img"
     }
   ],
   "newsSources": [
@@ -68,7 +143,6 @@
       "prefix": "kompas.com",
       "titleQuery": "h1.read__title",
       "paragraphQuery": "div.clearfix > p",
-      "categoryQuery": "ul.breadcrumb__wrap > li:nth-child(2) > a",
       "dateQuery": "div.read__time",
       "imageQuery": "div.photo__wrap > img"
     },
@@ -76,9 +150,15 @@
       "prefix": "detik.com",
       "titleQuery": "h1.detail__title",
       "paragraphQuery": "div.detail__body-text > p",
-      "categoryQuery": "span.detail__label",
       "dateQuery": "div.detail__date",
       "imageQuery": "img.img-zoomin"
+    },
+    {
+      "prefix": "cnnindonesia.com",
+      "titleQuery": "h1",
+      "paragraphQuery": "div.detail-text > p",
+      "dateQuery": "div.text-cnn_grey.text-sm.mb-4",
+      "imageQuery": "img.w-full"
     }
   ],
   "classementSources": [
