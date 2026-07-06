@@ -9,7 +9,7 @@ from functools import reduce
 app = Flask(__name__)
 
 settings = {}
-settings_path = "instance/settings.json"
+settings_path = os.path.join("instance", "settings.json")
 suggested_news_sources = []
 news_sources = []
 
@@ -25,6 +25,7 @@ def init_data():
     global news_sources
 
     if not os.path.exists(settings_path):
+        print("Settings file not found. Resetting to default settings.")
         reset_settings()
 
     with open(settings_path, mode="r") as file:
@@ -284,13 +285,13 @@ def set_settings():
 @app.route("/api/reset-settings", methods=["POST"])
 def reset_settings():
     default_file = os.path.join("config", "default.json")
-    user_file = os.path.join("instance", "settings.json")
 
     try:
+        os.makedirs(os.path.dirname(settings_path), exist_ok=True)
         with open(default_file, "r") as file:
             data_default = json.load(file)
 
-        with open(user_file, "w") as file:
+        with open(settings_path, "w") as file:
             json.dump(data_default, file, indent=4)
 
         init_data()
