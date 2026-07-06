@@ -34,7 +34,7 @@ def clean_text(text):
 
 
 def generate_news(text, model, apiKey):
-    client = Groq(api_key=os.getenv(apiKey))
+    client = Groq(api_key=apiKey)
     cleaned_text = clean_text(text)
     while True:
         try:
