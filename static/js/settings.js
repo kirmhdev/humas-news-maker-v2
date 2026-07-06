@@ -74,10 +74,6 @@ const addSuggestedSourceElement = (data = {}) => {
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Category Query</label>
-                    <input type="text" class="src-category-query" value="${data.categoryQuery || ""}" placeholder="element.class#id">
-                </div>
-                <div class="form-group">
                     <label>Link Query</label>
                     <input type="text" class="src-link-query" value="${data.linkQuery || ""}" placeholder="element.class#id">
                 </div>
@@ -116,10 +112,6 @@ const addNewsSourceElement = (data = {}) => {
                 <div class="form-group">
                     <label>Paragraph Query</label>
                     <input type="text" class="ns-paragraph-query" value="${data.paragraphQuery || ""}" placeholder="element.class#id">
-                </div>
-                <div class="form-group">
-                    <label>Category Query</label>
-                    <input type="text" class="ns-category-query" value="${data.categoryQuery || ""}" placeholder="element.class#id">
                 </div>
             </div>
             <div class="form-row">
@@ -215,7 +207,6 @@ settingsForm.addEventListener("submit", function (e) {
       category: item.querySelector(".src-category").value,
       articleQuery: item.querySelector(".src-article-query").value,
       titleQuery: item.querySelector(".src-title-query").value,
-      categoryQuery: item.querySelector(".src-category-query").value,
       linkQuery: item.querySelector(".src-link-query").value,
       dateQuery: item.querySelector(".src-date-query").value,
       imageQuery: item.querySelector(".src-image-query").value,
@@ -228,7 +219,6 @@ settingsForm.addEventListener("submit", function (e) {
       prefix: item.querySelector(".ns-prefix").value,
       titleQuery: item.querySelector(".ns-title-query").value,
       paragraphQuery: item.querySelector(".ns-paragraph-query").value,
-      categoryQuery: item.querySelector(".ns-category-query").value,
       dateQuery: item.querySelector(".ns-date-query").value,
       imageQuery: item.querySelector(".ns-image-query").value,
     })

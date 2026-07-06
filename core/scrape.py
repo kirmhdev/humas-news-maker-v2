@@ -1,52 +1,59 @@
+import os, tldextract, requests
 from io import BytesIO
-import os
-
 from bs4 import BeautifulSoup
 from html2image import Html2Image
-import requests
-import tldextract
 
 
-def scrape_suggested_news(sources, headers, category):
+def scrape_suggested_news(source, headers):
     news_list = []
     try:
-        for source in sources:
-            if source["category"] == category:
-                url = source["url"]
-                response = requests.get(url, headers=headers, timeout=5)
-                soup = BeautifulSoup(response.text, "html.parser")
+        url = source["url"]
+        response = requests.get(url, headers=headers, timeout=5)
+        soup = BeautifulSoup(response.text, "html.parser")
 
-                article_list = soup.select(source["articleQuery"])
+        article_list = soup.select(source["articleQuery"])
 
-                for article in article_list:
-                    title_tag = article.select_one(source["titleQuery"])
-                    category_tag = article.select_one(source["categoryQuery"])
-                    link_tag = article.select_one(source["linkQuery"])
-                    date_tag = article.select_one(source["dateQuery"])
-                    img_tag = article.select_one(source["imageQuery"])
+        for article in article_list:
+            title_tag = article.select_one(source["titleQuery"])
 
-                    news_list.append(
-                        {
-                            "title": (
-                                title_tag.text.replace("\n", " ").strip()
-                                if title_tag is not None
-                                else ""
-                            ),
-                            "prefix": source["prefix"],
-                            "category": (
-                                category_tag.text.replace("\n", " ").strip()
-                                if category_tag is not None
-                                else ""
-                            ),
-                            "date": (
-                                date_tag.text.replace("\n", " ").strip()
-                                if date_tag is not None
-                                else ""
-                            ),
-                            "image": img_tag.get("src") or img_tag.get("data-src"),
-                            "url": link_tag.get("href"),
-                        }
-                    )
+            if title_tag is not None:
+                link_tag = (
+                    article.select_one(source["linkQuery"])
+                    if source["linkQuery"]
+                    else None
+                )
+                date_tag = (
+                    article.select_one(source["dateQuery"])
+                    if source["dateQuery"]
+                    else None
+                )
+                img_tag = (
+                    article.select_one(source["imageQuery"])
+                    if source["imageQuery"]
+                    else None
+                )
+
+                news_list.append(
+                    {
+                        "title": (
+                            title_tag.text.replace("\n", " ").strip()
+                            if title_tag
+                            else ""
+                        ),
+                        "prefix": source["prefix"],
+                        "date": (
+                            date_tag.text.replace("\n", " ").strip() if date_tag else ""
+                        ),
+                        "image": (
+                            img_tag.get("src") or img_tag.get("data-src")
+                            if img_tag
+                            else article.get("i-img")
+                        ),
+                        "url": (
+                            link_tag.get("href") if link_tag else article.get("href")
+                        ),
+                    }
+                )
     except Exception as e:
         print(f"Error scraping news: {e}")
 
@@ -65,7 +72,6 @@ def scrape_news_from_source(id, url, headers, sources):
         soup = BeautifulSoup(response.text, "html.parser")
 
         title_tag = soup.select_one(source["titleQuery"])
-        category_tag = soup.select_one(source["categoryQuery"])
         date_tag = soup.select_one(source["dateQuery"])
         img_tag = soup.select_one(source["imageQuery"])
         paragraph_tag = soup.select(source["paragraphQuery"])
@@ -86,11 +92,6 @@ def scrape_news_from_source(id, url, headers, sources):
                 else ""
             ),
             "prefix": source["prefix"],
-            "category": (
-                category_tag.text.replace("\n", " ").strip()
-                if category_tag is not None
-                else ""
-            ),
             "date": (
                 date_tag.text.replace("\n", " ").strip() if date_tag is not None else ""
             ),

@@ -50,7 +50,6 @@ const Card = (news, id) => {
               <div class="left-section">
                 <img src="${news.image}" alt="Gambar Berita" class="card-image">
                 <div class="card-body">
-                  <span class="card-category">${news.category}</span>
                   <h3 id="card-title-${id}" class="card-title">${news.title}</h3>
                 </div>
               </div>

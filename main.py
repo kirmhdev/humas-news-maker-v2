@@ -1,9 +1,10 @@
-import json, threading, os, queue
+import json, threading, os, queue, concurrent.futures
 from time import sleep
 from flask import Flask, render_template, request
 from core.scrape import scrape_news_from_source, scrape_suggested_news
 from core.generate import generate_news
 from core.document import create_document, save_news_to_json
+from functools import reduce
 
 app = Flask(__name__)
 
@@ -42,7 +43,6 @@ def generate_news_worker(data):
     news = {
         "id": data["id"],
         "title": generated_news_data.get("title", ""),
-        "category": data["category"],
         "paragraphs": generated_news_data.get("paragraphs", []),
         "date": data["date"],
         "image": data["image"],
@@ -103,9 +103,23 @@ def get_suggested_news_categories():
 def get_suggested_news():
     category = request.args.get("category")
 
-    news = scrape_suggested_news(
-        sources=suggested_news_sources, headers=settings["headers"], category=category
+    sources = list(
+        filter(lambda item: item["category"] == category, suggested_news_sources)
     )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        futures = []
+
+        for source in sources:
+            future = executor.submit(scrape_suggested_news, source, settings["headers"])
+
+            futures.append(future)
+
+        news_list = list(
+            map(lambda item: item.result(), concurrent.futures.as_completed(futures))
+        )
+
+    news = reduce(lambda a, b: a + b, news_list)
 
     return json.dumps(news)
 

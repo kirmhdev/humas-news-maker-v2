@@ -12,7 +12,6 @@ const Card = (news) => `
                 <span class="badge bg-danger source-badge">${news.prefix}</span>
                 <img src="${news.image}" id="${news.url}" class="card-img-top card-image" alt="${news.title}" onclick="addNewsHandler('${news.url}')">
                 <div class="card-body d-flex flex-column">
-                  <span class="text-primary fw-bold" style="font-size: 0.8rem;">${news.category}</span>
                   <h5 class="card-title mt-2">${news.title}</h5>
                   <div class="mt-auto">
                     <small class="text-muted d-block mb-3">${news.date}</small>
