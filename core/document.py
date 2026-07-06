@@ -11,31 +11,16 @@ document = Document()
 
 def get_out_filename(root_out_dir):
     datetime_now = datetime.datetime.now()
-    first_weekday = datetime.datetime(
-        year=datetime_now.year, month=datetime_now.month, day=1
-    ).weekday()
-
-    offset_date = datetime_now.day + first_weekday - 1
-    week = math.floor(offset_date / 7)
-    month, year = datetime_now.month, datetime_now.year
-    if week == 0:
-        week = 4
-        month -= 1
-        if month == 0:
-            month = 12
-            year -= 1
-
-    formatted_date = datetime.datetime(month=month, year=year, day=1)
-
-    edition = f"{formatted_date.strftime("%B %Y")} ({str(week)})"
 
     current_directory = os.getcwd()
-    out_dir = f"{root_out_dir}/{formatted_date.strftime("%Y/%B")}"
+    out_dir = f"{root_out_dir}/{datetime_now.strftime("%Y/%B")}"
     final_directory = os.path.join(current_directory, out_dir)
     if not os.path.exists(final_directory):
         os.makedirs(final_directory)
 
-    out_filename = os.path.join(final_directory, f"sans {edition}")
+    out_filename = os.path.join(
+        final_directory, f"sans {datetime_now.strftime("%d %A")}"
+    )
     return out_filename
 
 
