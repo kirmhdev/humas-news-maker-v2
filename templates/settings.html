@@ -21,122 +21,17 @@
 
       <form id="settings-form">
         <div class="section-card">
-          <div class="section-title">1. General Settings</div>
-          <div class="form-group">
-            <label>Suggested News Categories (Dinamis)</label>
-            <div class="tags-container" id="category-tags-container"></div>
-            <div class="tag-input-group">
-              <input
-                type="text"
-                id="new-category-input"
-                placeholder="Tambah kategori baru... (Contoh: Ekonomi)"
-              />
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="addCategoryTag()"
-              >
-                Tambah
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-title">2. News Scraping Configuration</div>
-
-          <div class="form-group" style="margin-bottom: 30px">
-            <label style="font-weight: 600; font-size: 15px"
-              >Sumber Berita Rekomendasi</label
-            >
-            <div id="suggested-sources-container"></div>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              onclick="addSuggestedSourceElement()"
-            >
-              + Tambah Sumber Rekomendasi
-            </button>
-          </div>
-
-          <div class="form-group">
-            <label style="font-weight: 600; font-size: 15px"
-              >Sumber Berita</label
-            >
-            <div id="news-sources-container"></div>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              onclick="addNewsSourceElement()"
-            >
-              + Tambah Sumber Berita
-            </button>
-          </div>
-
-          <div class="form-group">
-            <label style="font-weight: 600; font-size: 15px"
-              >Sumber Klasemen</label
-            >
-            <div id="classement-sources-container"></div>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              onclick="addClassementSourceElement()"
-            >
-              + Tambah Sumber Klasemen
-            </button>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-title">3. API & Request Settings</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="groq-model">Groq Model LLM</label>
-              <input
-                type="text"
-                id="groq-model"
-                name="groq-model"
-                value="openai/gpt-oss-120b"
-              />
-            </div>
-            <div class="form-group">
-              <label for="groq-api-key">Groq API Key</label>
-              <input
-                type="text"
-                id="groq-api-key"
-                name="groq-api-key"
-                placeholder="Masukkan API Key dari Groq..."
-              />
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="groq-system-prompt">Groq System Prompt</label>
-            <textarea
-              id="groq-system-prompt"
-              name="groq-system-prompt"
-              rows="4"
-              placeholder="Masukkan system prompt untuk mengatur perilaku AI..."
-            ></textarea>
-          </div>
-          <div class="form-group">
-            <label for="user-agent">HTTP User-Agent</label>
-            <input type="text" id="user-agent" name="user-agent" />
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-title">4. Document Layout & Typography</div>
+          <div class="section-title">Document Layout & Typography</div>
 
           <div class="form-row">
             <div class="form-group">
               <label for="title-font">Font Judul</label>
-              <select id="title-font">
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Georgia">Georgia</option>
-              </select>
+              <input
+                type="text"
+                id="title-font"
+                name="title-font"
+                placeholder="Pastikan font sudah terinstall..."
+              />
             </div>
             <div class="form-group">
               <label for="title-size">Ukuran Font Judul (pt)</label>
@@ -155,12 +50,12 @@
           <div class="form-row">
             <div class="form-group">
               <label for="paragraph-font">Font Paragraf</label>
-              <select id="paragraph-font">
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Georgia">Georgia</option>
-              </select>
+              <input
+                type="text"
+                id="paragraph-font"
+                name="paragraph-font"
+                placeholder="Pastikan font sudah terinstall..."
+              />
             </div>
             <div class="form-group">
               <label for="paragraph-size">Ukuran Font Paragraf (pt)</label>
@@ -200,6 +95,116 @@
               <label for="page-mrig">Margin Kanan (inch)</label>
               <input type="number" id="page-mrig" step="0.01" min="0" />
             </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">News Scraping Configuration</div>
+
+          <div class="form-group" style="margin-bottom: 30px">
+            <label style="font-weight: 600; font-size: 15px"
+              >Kategori Berita Rekomendasi</label
+            >
+            <div class="tags-container" id="category-tags-container"></div>
+            <div class="tag-input-group">
+              <input
+                type="text"
+                id="new-category-input"
+                placeholder="Tambah kategori baru... (Contoh: Ekonomi)"
+              />
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="addCategoryTag()"
+              >
+                Tambah
+              </button>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="form-group" style="margin-bottom: 30px">
+            <label style="font-weight: 600; font-size: 15px"
+              >Sumber Berita Rekomendasi</label
+            >
+            <div id="suggested-sources-container"></div>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="addSuggestedSourceElement()"
+            >
+              + Tambah Sumber Rekomendasi
+            </button>
+          </div>
+
+          <hr />
+
+          <div class="form-group">
+            <label style="font-weight: 600; font-size: 15px"
+              >Sumber Berita</label
+            >
+            <div id="news-sources-container"></div>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="addNewsSourceElement()"
+            >
+              + Tambah Sumber Berita
+            </button>
+          </div>
+
+          <hr />
+
+          <div class="form-group">
+            <label style="font-weight: 600; font-size: 15px"
+              >Sumber Klasemen</label
+            >
+            <div id="classement-sources-container"></div>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="addClassementSourceElement()"
+            >
+              + Tambah Sumber Klasemen
+            </button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">API & Request Settings</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="groq-model">Groq Model LLM</label>
+              <input
+                type="text"
+                id="groq-model"
+                name="groq-model"
+                value="openai/gpt-oss-120b"
+              />
+            </div>
+            <div class="form-group">
+              <label for="groq-api-key">Groq API Key</label>
+              <input
+                type="text"
+                id="groq-api-key"
+                name="groq-api-key"
+                placeholder="Masukkan API Key dari Groq..."
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="groq-system-prompt">Groq System Prompt</label>
+            <textarea
+              id="groq-system-prompt"
+              name="groq-system-prompt"
+              rows="4"
+              placeholder="Masukkan system prompt untuk mengatur perilaku AI..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="user-agent">HTTP User-Agent</label>
+            <input type="text" id="user-agent" name="user-agent" />
           </div>
         </div>
 
